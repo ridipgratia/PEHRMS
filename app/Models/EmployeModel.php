@@ -8,16 +8,21 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
-class AdminModel extends Authenticatable
+class EmployeModel extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $guard = 'admin';
-    protected $table = 'admin';
+    protected $guard = 'employe';
+    protected $table = 'employe';
     protected $fillable = [
-        'admin_code',
+        'emp_code',
+        'name',
         'email',
         'password',
-        'role'
+        'phone',
+        'district_code',
+        'block_code',
+        'gp_code',
+        'level_id',
     ];
     protected $hidden = [
         'password'

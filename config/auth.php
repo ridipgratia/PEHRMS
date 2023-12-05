@@ -40,6 +40,27 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // Admin Guard 
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+        'admin_api' => [
+            'driver' => 'passport',
+            'provider' => 'admins'
+        ],
+
+        // Employe Guard
+
+        'employe' => [
+            'driver' => 'session',
+            'provider' => 'employes'
+        ],
+        'employe_api' => [
+            'driver' => 'passport',
+            'provider' => 'employes'
+        ]
     ],
 
     /*
@@ -65,6 +86,17 @@ return [
             'model' => App\Models\User::class,
         ],
 
+        // Admin Provider
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\AdminModel::class
+        ],
+
+        // Employe Provider
+        'employes' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\EmployeModel::class
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
