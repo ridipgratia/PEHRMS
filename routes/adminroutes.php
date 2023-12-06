@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/admin-register', [AdminAuthController::class, 'register']);
 Route::post('/admin-login', [AdminAuthController::class, 'login']);
-
 // Admin Protected 
 
 Route::middleware('auth:admin_api')->group(function () {
