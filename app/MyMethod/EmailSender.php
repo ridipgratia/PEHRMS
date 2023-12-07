@@ -11,11 +11,18 @@ class EmailSender
     public static function emailSend($data, $email, $email_blade)
     {
         // $data = ['name' => 'coder 1', 'data' => 'developer'];
-        $employe['to'] = $email;
-        Mail::send($email_blade, $data, function ($messages) use ($employe, $data) {
-            $messages->to($employe['to']);
-            $messages->subject($data['subject']);
-        });
+        $check = false;
+        try {
+            $employe['to'] = $email;
+            Mail::send($email_blade, $data, function ($messages) use ($employe, $data) {
+                $messages->to($employe['to']);
+                $messages->subject($data['subject']);
+            });
+            $check = true;
+        } catch (Exception $err) {
+            $check = false;
+        }
+        return $check;
     }
     public static function saveOTP($table, $data)
     {

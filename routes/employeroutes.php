@@ -11,6 +11,8 @@ Route::post('/employe-login', [EmployeAuthController::class, 'login']);
 
 Route::post('/employe-otp-login', [EmployeAuthController::class, 'otp_login']);
 
+// Employe OTP  Verify And Login 
+Route::post('/employe-otp-verify', [EmployeAuthController::class, 'otp_verify_login']);
 // Middleware For Auth user 
 
 Route::middleware('auth:employe_api')->group(function () {

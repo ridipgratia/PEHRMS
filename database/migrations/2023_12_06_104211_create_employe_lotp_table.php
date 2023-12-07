@@ -16,7 +16,7 @@ class CreateEmployeLotpTable extends Migration
         Schema::create('employe_lotp', function (Blueprint $table) {
             $table->id();
             $table->string('email')->unique();
-            $table->time('expire_time');
+            $table->dateTime('expire_time');
             $table->integer('otp');
             $table->timestamps();
         });

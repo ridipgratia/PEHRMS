@@ -4,29 +4,89 @@ namespace App\Http\Controllers;
 
 use App\Models\EmployeModel;
 use App\MyMethod\EmailSender;
+use App\MyMethod\EmployeMethod;
 use DateTime;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeAuthController extends Controller
 {
     public function register(Request $request)
     {
         // Employe Registration 
-        $employe = EmployeModel::create([
-            'emp_code' => $request->emp_code,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'phone' => $request->phone,
-            'district_code' => $request->district_code,
-            'block_code' => $request->block_code,
-            'gp_code' => $request->gp_code,
-            'level_id' => $request->level_id,
-        ]);
-        $token = $employe->createToken('EmployeToken')->accessToken;
-        return response()->json(['token' => $token, 'employe' => $employe], 200);
+        // $employe = EmployeModel::create([
+        //     'emp_code' => $request->emp_code,
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'password' => Hash::make($request->password),
+        //     'phone' => $request->phone,
+        //     'district_code' => $request->district_code,
+        //     'block_code' => $request->block_code,
+        //     'gp_code' => $request->gp_code,
+        //     'level_id' => $request->level_id,
+        // ]);
+        $status = 400;
+        $message = [];
+        $error_message = [
+            "required" => 'Fill All Input Fileds ',
+            "integer" => "Code Should Be Numeric",
+            "email" => "Enter A Valid Email",
+            "min" => "Phone Number Must Be 10 Digits",
+            "max" => "Phone Number Must Be 10 Digits"
+        ];
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required',
+                'email' => 'required|email',
+                'phone' => 'required|min:10|max:10',
+                'state_code' => 'required'
+            ],
+            $error_message
+        );
+        if ($validator->fails()) {
+            array_push($message, $validator->errors()->all());
+        } else {
+            $check_employe_data = EmployeMethod::checkEmployeData('employe', 'email', $request->email);
+            if ($check_employe_data) {
+                $check_employe_data = EmployeMethod::checkEmployeData('employe', 'phone', $request->phone);
+                if ($check_employe_data) {
+                    $level_code = null;
+                    if ($request->state_code) {
+                        if ($request->district_code) {
+                            if ($request->block_code) {
+                                if ($request->gp_code) {
+                                    $level_code = "GP";
+                                } else {
+                                    $level_code = "BL";
+                                }
+                            } else {
+                                $level_code = "DT";
+                            }
+                        } else {
+                            $level_code = "ST";
+                        }
+                    }
+                    if ($level_code) {
+                        $emp_code = EmployeMethod::generateEmpCode($level_code);
+                        array_push($message, [$emp_code]);
+                    } else {
+                        array_push($message, ['Select Your Level']);
+                    }
+                } else {
+                    array_push($message, ['Phone Already Registered !']);
+                }
+            } else {
+                $done = ["ok"];
+                array_push($message, ['Email Already Registered !']);
+            }
+        }
+        // $token = $employe->createToken('EmployeToken')->accessToken;
+        return response()->json(['status' => $status, 'message' => $message], 200);
     }
     // Employe Login
     public function login(Request $request)
@@ -39,10 +99,10 @@ class EmployeAuthController extends Controller
             $login_user = EmployeModel::where('email', $request->email)->first();
             Auth::login($login_user);
             $employe = Auth::user();
-            $token = $employe->createToken('EmployeToken')->accessToken;
+            $token = $login_user->createToken('EmployeToken')->accessToken;
             return response()->json(['token' => $token, 'employe_data' => $employe], 200);
         } else {
-            return response()->json(['message' => 'User Not Found '], 400);
+            return response()->json(['message' => 'Employe  Not Found '], 400);
         }
     }
     // Employe Profile
@@ -63,6 +123,7 @@ class EmployeAuthController extends Controller
     // Employe OTP Login
     public function otp_login(Request $request)
     {
+
         $login_email = $request->email;
         $status = 400;
         $message = null;
@@ -75,16 +136,87 @@ class EmployeAuthController extends Controller
                 $emailData = ['otp' => $otp, 'name' => $login_employe->name, 'subject' => 'Employe Login OTP'];
                 date_default_timezone_set('Asia/Kolkata');
                 $send_time = date('Y-m-d H:i:s');
-                $expire_time = $login_employe->created_at;
-                $send_time_stamp = new DateTime($send_time);
-                $diff = $send_time_stamp->diff(new DateTime($expire_time));
-                $diff = [$diff->d, $diff->h, $diff->i];
-                // $check = EmailSender::saveOTP('employe_lotp');
-                // EmailSender::emailSend($emailData, $login_employe->email, 'employe_otp');
+                $save_otp_data = [
+                    'email' => $login_employe->email,
+                    'expire_time' => $send_time,
+                    'otp' => $otp,
+                    'created_at' => $send_time,
+                    'updated_at' => $send_time
+                ];
+                $check = EmailSender::saveOTP('employe_lotp', $save_otp_data);
+                if ($check) {
+                    $check = EmailSender::emailSend($emailData, $login_employe->email, 'employe_otp');
+                    if ($check) {
+                        $status = 200;
+                        $message = "Email Send !";
+                    } else {
+                        $message = "Email Not Send Try Again !";
+                    }
+                } else {
+                    $message = "Try Later Server Error !";
+                }
+                // $expire_time = $login_employe->created_at;
+                // $send_time_stamp = new DateTime($send_time);
+                // $diff = $send_time_stamp->diff(new DateTime($expire_time));
+                // $diff = [$diff->d, $diff->h, $diff->i];
                 $status = 200;
-                return response()->json(['status' => $status, 'email' => $diff], 200);
+                return response()->json(['status' => $status, 'message' => $message], 200);
             } else {
                 $message = "Email ID Not Found !";
+            }
+        }
+        return response()->json(['status' => $status, 'message' => $message], 200);
+    }
+
+    // Employe OTP Verify And Login 
+    public function otp_verify_login(Request $request)
+    {
+        $login_email = $request->email;
+        $employe_otp = $request->employe_otp;
+        $status = 400;
+        $message = null;
+        $check = false;
+        if ($login_email == null || $employe_otp == null) {
+            $message = "OTP Required !";
+        } else {
+            $login_employe = EmployeModel::where('email', $login_email)->first();
+            if ($login_employe) {
+                try {
+                    $otp_data = DB::table('employe_lotp')
+                        ->where('email', $login_employe->email)
+                        ->get();
+                    $check = true;
+                } catch (Exception $err) {
+                    $check = false;
+                }
+                if ($check) {
+                    if (count($otp_data) == 0) {
+                        $message = "Re Generate OTP ! OTP Lost !";
+                    } else {
+                        date_default_timezone_set('Asia/Kolkata');
+                        $expire_time = $otp_data[0]->expire_time;
+                        $revice_time = date('Y-m-d H:i:s');
+                        $new_expire_time = new DateTime($expire_time);
+                        $time_diff = $new_expire_time->diff(new DateTime($revice_time));
+                        if ($time_diff->y == 0 & $time_diff->m == 0 && $time_diff->d == 0 && $time_diff->h == 0 && $time_diff->i <= 20) {
+                            if ($otp_data[0]->otp == $employe_otp) {
+                                Auth::login($login_employe);
+                                $employe = Auth::user();
+                                $token = $login_employe->createToken('EmployeToken')->accessToken;
+                                $status = 200;
+                                return response()->json(['status' => $status, 'token' => $token, 'data' => $employe], 200);
+                            } else {
+                                $message = "OTP Not Currect !";
+                            }
+                        } else {
+                            $message = "OTP Is Expired !";
+                        }
+                    }
+                } else {
+                    $message = "Try Later Server Error !";
+                }
+            } else {
+                $message = "Email Not Identify !";
             }
         }
         return response()->json(['status' => $status, 'message' => $message], 200);

@@ -61,9 +61,9 @@ class AdminAuthController extends Controller
                     if ($login_user) {
                         Auth::login($login_user);
                         $user = Auth::user();
-                        $token = $user->createToken('AdminToken')->accessToken;
+                        $token = $login_user->createToken('AdminToken')->accessToken;
                         $status = 200;
-                        return response()->json(['status' => $status, 'token' => $token, 'admin_data' => $user], 200);
+                        return response()->json(['status' => $status, 'token' => $token], 200);
                     } else {
                         $status = 400;
                         $message = "Admin Email Not Found !";
@@ -83,7 +83,7 @@ class AdminAuthController extends Controller
     // Admin Profile
     public function profile(Request $request)
     {
-        return response()->json(['status' => 200, 'message' => Auth::user()], 200);
+        return response()->json(['status' => 200, 'data' => Auth::user()], 200);
     }
 
     // Admin Logout
