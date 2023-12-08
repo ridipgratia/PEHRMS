@@ -21,9 +21,9 @@ class CreateEmployeTable extends Migration
             $table->string('password');
             $table->string('phone')->unique();
             $table->integer('state_code')->default(999);
-            $table->integer('district_code');
-            $table->integer('block_code');
-            $table->integer('gp_code');
+            $table->integer('district_code')->nullable();
+            $table->integer('block_code')->nullable();
+            $table->integer('gp_code')->nullable();
             $table->integer('role')->default(2);
             $table->integer('level_id');
             $table->integer('active_status')->default(1);

@@ -72,8 +72,56 @@ class EmployeAuthController extends Controller
                         }
                     }
                     if ($level_code) {
+                        $password = EmployeMethod::generatePassword();
                         $emp_code = EmployeMethod::generateEmpCode($level_code);
-                        array_push($message, [$emp_code]);
+                        $check = false;
+                        try {
+                            // $employe_id = DB::table('employe')
+                            //     ->insertGetId([
+                            //         'emp_code' => $emp_code . (DB::select('select id from employe') == null ? 0 : DB::select('select id from employe order by id desc limit 1')[0]->id),
+                            //         'name' => $request->name,
+                            //         'email' => $request->email,
+                            //         'password' => Hash::make($password),
+                            //         'phone' => $request->phone,
+                            //         'district_code' => $request->district_code,
+                            //         'block_code' => $request->block_code,
+                            //         'gp_code' => $request->gp_code,
+                            //         'level_id' => $request->level_id,
+                            //     ]);
+                            $employe_save = EmployeModel::create([
+                                'emp_code' => $emp_code . (DB::select('select id from employe') == null ? 0 : DB::select('select id from employe order by id desc limit 1')[0]->id),
+                                'name' => $request->name,
+                                'email' => $request->email,
+                                'password' => Hash::make($password),
+                                'phone' => $request->phone,
+                                'district_code' => $request->district_code,
+                                'block_code' => $request->block_code,
+                                'gp_code' => $request->gp_code,
+                                'level_id' => $request->level_id,
+                            ]);
+                            $check = true;
+                        } catch (Exception $err) {
+                            $check = false;
+                        }
+                        if ($check) {
+                            // array_push($message, ['Done']);
+                            $employe_data = [
+                                'name' => $employe_save->name,
+                                'emp_code' => $employe_save->emp_code,
+                                'email' => $employe_save->email,
+                                'password' => $password,
+                                'subject' => 'Employe Registration'
+                            ];
+                            $check_email_send = EmailSender::emailSend($employe_data, $employe_save->email, 'employe_register');
+                            if ($check_email_send) {
+                                $status = 200;
+                                array_push($message, [$employe_save, 'Registration Completed ']);
+                            } else {
+                                array_push($message, ['Registration Completed But Email Not Send !']);
+                            }
+                        } else {
+                            array_push($message, ['Try Again Registration Not Completed']);
+                        }
                     } else {
                         array_push($message, ['Select Your Level']);
                     }
@@ -95,20 +143,34 @@ class EmployeAuthController extends Controller
             'email' => $request->email,
             'password' => $request->password
         ];
+        $status = 400;
+        $message = null;
         if (Auth::guard('employe')->attempt($login_data)) {
-            $login_user = EmployeModel::where('email', $request->email)->first();
-            Auth::login($login_user);
-            $employe = Auth::user();
-            $token = $login_user->createToken('EmployeToken')->accessToken;
-            return response()->json(['token' => $token, 'employe_data' => $employe], 200);
+            $check = false;
+            try {
+                $login_user = EmployeModel::where('email', $request->email)->first();
+                $check = true;
+            } catch (Exception $err) {
+                $check = false;
+            }
+            if ($check) {
+                Auth::login($login_user);
+                $employe = Auth::user();
+                $token = $login_user->createToken('EmployeToken')->accessToken;
+                $status = 200;
+                return response()->json(['status' => $status, 'token' => $token], 200);
+            } else {
+                $message = "Server Error Try Later !";
+            }
         } else {
-            return response()->json(['message' => 'Employe  Not Found '], 400);
+            $message = "User Credentials Not Found !";
         }
+        return response()->json(['status' => $status, 'message' => $message], 200);
     }
     // Employe Profile
     public function profile(Request $request)
     {
-        return response()->json(['employe_data' => Auth::user()], 200);
+        return response()->json(['status' => 200, 'message' => 'User Authorized', 'employe_data' => Auth::user()], 200);
     }
     // Employe Logout 
     public function logout(Request $request)
@@ -148,7 +210,7 @@ class EmployeAuthController extends Controller
                     $check = EmailSender::emailSend($emailData, $login_employe->email, 'employe_otp');
                     if ($check) {
                         $status = 200;
-                        $message = "Email Send !";
+                        $message = "OTP Send Successfully In Your Email !";
                     } else {
                         $message = "Email Not Send Try Again !";
                     }

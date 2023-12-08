@@ -83,7 +83,7 @@ class AdminAuthController extends Controller
     // Admin Profile
     public function profile(Request $request)
     {
-        return response()->json(['status' => 200, 'data' => Auth::user()], 200);
+        return response()->json(['status' => 200, 'message' => 'Admin Authorized', 'data' => Auth::user()], 200);
     }
 
     // Admin Logout
