@@ -141,7 +141,8 @@ class EmployeAuthController extends Controller
     {
         $login_data = [
             'email' => $request->email,
-            'password' => $request->password
+            'password' => $request->password,
+            'level_id' => $request->level_id
         ];
         $status = 400;
         $message = null;
@@ -221,7 +222,6 @@ class EmployeAuthController extends Controller
                 // $send_time_stamp = new DateTime($send_time);
                 // $diff = $send_time_stamp->diff(new DateTime($expire_time));
                 // $diff = [$diff->d, $diff->h, $diff->i];
-                $status = 200;
                 return response()->json(['status' => $status, 'message' => $message], 200);
             } else {
                 $message = "Email ID Not Found !";

@@ -10,10 +10,10 @@
 
 <body>
     <p>Employe Registration</p>
-    <p>Your Name -> {{ $name }}</p>
-    <p>Your Employee Code -> {{ $emp_code }}</p>
-    <p>Your Email ID -> {{ $email }}</p>
-    <p>Your Password -> {{ $password }}</p>
+    <p>Your Name -> {{ $data['name'] }}</p>
+    <p>Your Employee Code -> {{ $data['emp_code'] }}</p>
+    <p>Your Email ID -> {{ $data['email'] }}</p>
+    <p>Your Password -> {{ $data['password'] }}</p>
 </body>
 
 </html>

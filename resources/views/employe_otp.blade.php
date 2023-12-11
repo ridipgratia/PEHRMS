@@ -10,8 +10,8 @@
 
 <body>
     <p>This Is Your Login OTP For Employe</p>
-    <p>Your Name : {{ $name }} </p>
-    <p>Your OTP Is -> {{ $otp }}</p>
+    <p>Your Name : {{ $data['name'] }} </p>
+    <p>Your OTP Is -> {{ $data['otp'] }}</p>
 </body>
 
 </html>

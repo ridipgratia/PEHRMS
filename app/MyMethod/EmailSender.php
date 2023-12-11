@@ -2,6 +2,7 @@
 
 namespace App\MyMethod;
 
+use App\Mail\MailNotify;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -13,11 +14,13 @@ class EmailSender
         // $data = ['name' => 'coder 1', 'data' => 'developer'];
         $check = false;
         try {
-            $employe['to'] = $email;
-            Mail::send($email_blade, $data, function ($messages) use ($employe, $data) {
-                $messages->to($employe['to']);
-                $messages->subject($data['subject']);
-            });
+            // $employe['to'] = $email;
+            // Mail::send($email_blade, $data, function ($messages) use ($employe, $data) {
+            //     $messages->to($employe['to']);
+            //     $messages->subject($data['subject']);
+            // });
+            $data['email_blade'] = $email_blade;
+            Mail::to($email)->send(new MailNotify($data));
             $check = true;
         } catch (Exception $err) {
             $check = false;
