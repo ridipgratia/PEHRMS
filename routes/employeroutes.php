@@ -3,8 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeAuthController;
 
-// Employe Register
-Route::post('/employe-register', [EmployeAuthController::class, 'register']);
 // Employe Login
 Route::post('/employe-login', [EmployeAuthController::class, 'login']);
 // Employe OTP Login
