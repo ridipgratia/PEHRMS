@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EmployeModel;
+use App\MyMethod\AdminMethod;
 use App\MyMethod\EmailSender;
 use App\MyMethod\EmployeMethod;
 use Exception;
@@ -136,6 +137,63 @@ class EmployeeRegistrationController extends Controller
             }
         }
         // $token = $employe->createToken('EmployeToken')->accessToken;
+        return response()->json(['status' => $status, 'message' => $message], 200);
+    }
+    public function getDistricts(Request $request)
+    {
+        $status = 400;
+        $message = "";
+        if (AdminMethod::getAllDistricts()) {
+            $districts = AdminMethod::getAllDistricts();
+            $status = 200;
+            return response()->json(['status' => $status, 'districts' => $districts], 200);
+        } else {
+            $message = "Server Error Try Later !";
+        }
+        return response()->json(['status' => $status, 'message' => $message], 200);
+    }
+    public function getBlocks(Request $request)
+    {
+        $status = 400;
+        $message = "";
+        $district_code = $request->district_code;
+        if ($district_code) {
+            $blocks = AdminMethod::getAllBlocks($district_code);
+            if ($blocks) {
+                if (count($blocks) == 0) {
+                    $message = "No Blocks Found ";
+                } else {
+                    $status = 200;
+                    return response()->json(['status' => $status, 'blocks' => $blocks], 200);
+                }
+            } else {
+                $message = "Server Error Try Later !";
+            }
+        } else {
+            $message = "Didn't Recieve District Code ";
+        }
+        return response()->json(['status' => $status, 'message' => $message], 200);
+    }
+    public function getGPs(Request $request)
+    {
+        $status = 400;
+        $message = "";
+        $block_code = $request->block_code;
+        if ($block_code) {
+            $gps = AdminMethod::getAllGPs($block_code);
+            if ($gps) {
+                if (count($gps) == 0) {
+                    $message = "No GP found!";
+                } else {
+                    $status = 200;
+                    return response()->json(['status' => $status, 'gps' => $gps], 200);
+                }
+            } else {
+                $message = "Server Error Try Later !";
+            }
+        } else {
+            $message = "Didn't Recieve Block Code ";
+        }
         return response()->json(['status' => $status, 'message' => $message], 200);
     }
 }
