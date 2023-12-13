@@ -29,7 +29,7 @@ class MailNotify extends Mailable
      */
     public function build()
     {
-        return $this->from('memorytemp5@gmail.com', 'PEHRMS')
+        return $this->from('ridipgoswami186@gmail.com', 'PEHRMS')
             ->subject($this->data['subject'])->view($this->data['email_blade'])->with('data', $this->data);
         // return $this->view('view.name');
     }

@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Validator;
 
 class EmployeeRegistrationController extends Controller
 {
+
+    // Registration API OLD
     public function register(Request $request)
     {
         // Employe Registration 
@@ -34,7 +36,8 @@ class EmployeeRegistrationController extends Controller
         $error_message = [
             "name.required" => 'Name Is Required ',
             "email.required" => 'Email ID Required ',
-            "phone.required" => 'Phone Number Is Required ',
+            "phone.required" => 'Phone Number Is R
+            equired ',
             "state_code.required" => 'State Code Is Required ',
             "integer" => "Code Should Be Numeric",
             "email" => "Enter A Valid Email",
@@ -138,6 +141,34 @@ class EmployeeRegistrationController extends Controller
         }
         // $token = $employe->createToken('EmployeToken')->accessToken;
         return response()->json(['status' => $status, 'message' => $message], 200);
+    }
+
+    // Registration API NEW
+    public function registration(Request $request)
+    {
+        $status = 400;
+        $message = [];
+        $error_message = [
+            "required" => ':attribute Is Required Field',
+            'email' => ':attribute Only accepts Email Type',
+            'max' => ':attribute Only 10 Digits',
+            'min' => ':attribute Only 10 Digits'
+        ];
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'employe_name' => 'required',
+                'employe_email' => 'required|email',
+                'employe_phone' => 'required|min:10|max:10'
+            ],
+            $error_message
+        );
+        if ($validator->fails()) {
+            array_push($message, $validator->errors()->all());
+        } else {
+            array_push($message, [$request->all()]);
+        }
+        return response()->json(['status' => $status, 'message' => $message]);
     }
     public function getDistricts(Request $request)
     {
