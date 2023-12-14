@@ -3,7 +3,9 @@
 namespace App\MyMethod;
 
 use App\Models\EmployeModel;
+use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class EmployeMethod
 {
@@ -45,5 +47,44 @@ class EmployeMethod
 
 
         return str_shuffle($password);
+    }
+    // Storage File In Storages
+    public static function storeFile($file, $path)
+    {
+        try {
+            $url = $file->store('public/images/' . $path);
+            return $url;
+        } catch (Exception $err) {
+            return NULL;
+        }
+    }
+    public static function deleteFile($file_url)
+    {
+        try {
+            if (Storage::exists($file_url)) {
+                Storage::delete($file_url);
+            }
+            return true;
+        } catch (Exception $err) {
+            return false;
+        }
+    }
+    public static function uploadEmployeFiles($employe_files)
+    {
+        $check = false;
+        foreach ($employe_files as $employe_key => $employe_value) {
+            $check_url = EmployeMethod::storeFile($employe_value, 'HRMS123');
+            if ($check_url == NULL) {
+                foreach ($employe_files as $delete_key => $delete_value) {
+                    $temp_check = EmployeMethod::deleteFile($delete_value);
+                }
+                $check = false;
+                break;
+            } else {
+                $employe_files[$employe_key] = $check_url;
+                $check = true;
+            }
+        }
+        return [$check, $employe_files];
     }
 }

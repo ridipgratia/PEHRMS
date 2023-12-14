@@ -16,6 +16,7 @@ class CreateEmployeesTable extends Migration
         Schema::create('employees', function (Blueprint $table) {
             $table->id();
             $table->string('employe_code')->unique();
+            $table->string('password');
             $table->string('employe_name');
             $table->string('employe_designation');
             $table->integer('service_status');
@@ -42,11 +43,12 @@ class CreateEmployeesTable extends Migration
             $table->date('date_of_order');
             $table->string('order_document');
             $table->date('date_of_joining');
-            $table->string('joining_document');
+            $table->string('current_joining_document');
             $table->string('branch');
             $table->date('initial_date_of_joining');
             $table->string('initial_appointment_letter');
             $table->string('initial_joining_letter');
+            $table->integer('state')->default(999);
             $table->integer('district');
             $table->integer('block');
             $table->integer('gp');

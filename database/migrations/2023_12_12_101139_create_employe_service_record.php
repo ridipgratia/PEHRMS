@@ -28,8 +28,8 @@ class CreateEmployeServiceRecord extends Migration
             $table->integer('transferred_to_gp')->nullable();
             $table->string('transferred_document')->nullable();
             $table->date('transferred_date')->nullable();
-            $table->string('joining_document')->nullable();
-            $table->date('joining_date')->nullable();
+            $table->string('previous_joining_document')->nullable();
+            $table->date('previous_joining_date')->nullable();
             $table->string('service_branch')->nullable();
             $table->timestamps();
         });
