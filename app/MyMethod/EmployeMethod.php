@@ -69,22 +69,74 @@ class EmployeMethod
             return false;
         }
     }
-    public static function uploadEmployeFiles($employe_files)
+    public static function uploadEmployeFiles($employe_files, $path)
     {
-        $check = false;
+        $check = true;
+        $count = 0;
+        $url = "";
         foreach ($employe_files as $employe_key => $employe_value) {
-            $check_url = EmployeMethod::storeFile($employe_value, 'HRMS123');
-            if ($check_url == NULL) {
+            $count++;
+            if ($count != 15) {
+                $url = EmployeMethod::storeFile($employe_value, '/EmployeDocument/' . $path);
+            } else {
+                $url = NULL;
+            }
+            if ($url == NULL) {
                 foreach ($employe_files as $delete_key => $delete_value) {
                     $temp_check = EmployeMethod::deleteFile($delete_value);
                 }
+                Storage::deleteDirectory('public/images/EmployeDocument/' . $path . '/');
                 $check = false;
                 break;
             } else {
-                $employe_files[$employe_key] = $check_url;
+                $employe_files[$employe_key] = $url;
                 $check = true;
             }
         }
         return [$check, $employe_files];
+    }
+    public static function revertEmployeData($table, $colun_name, $id)
+    {
+        try {
+            DB::table($table)
+                ->where($colun_name, $id)
+                ->delete();
+            return true;
+        } catch (Exception $err) {
+            return false;
+        }
+    }
+    public static function uploadFileDatabase($table, $files_data, $id)
+    {
+        try {
+            DB::table($table)
+                ->where('id', $id)
+                ->update(
+                    $files_data
+                );
+            return true;
+        } catch (Exception $err) {
+            return false;
+        }
+    }
+    public static function uploadFileDatabase_2($table, $files_data, $column_name, $id)
+    {
+        try {
+            DB::table($table)
+                ->where($column_name, $id)
+                ->update(
+                    $files_data
+                );
+            return true;
+        } catch (Exception $err) {
+            return false;
+        }
+    }
+    public static function revertEmployeFile($employe_files, $path)
+    {
+        foreach ($employe_files as $file_key => $file_value) {
+            EmployeMethod::deleteFile($file_value);
+        }
+        Storage::deleteDirectory('public/images/EmployeDocument/' . $path . '/');
     }
 }
