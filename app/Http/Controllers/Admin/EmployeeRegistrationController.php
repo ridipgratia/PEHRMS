@@ -325,10 +325,10 @@ class EmployeeRegistrationController extends Controller
                                     "employe_name" => 'employe_name',
                                     "employe_designation" => 'employe_designation',
                                     "service_status" => '1',
-                                    "employe_phone" => '700214253',
+                                    "employe_phone" => '7002142545',
                                     "employe_category" => 'employe_category',
                                     "employe_alt_number" => 'employe_alt_number',
-                                    "employe_email" => 'employe_email_3',
+                                    "employe_email" => 'employe_email_5',
                                     "employe_profile" => 'employe_profile',
                                     "employe_father_name" => 'employe_father_name',
                                     "employe_mother_name" => 'employe_mother_name',
@@ -505,19 +505,21 @@ class EmployeeRegistrationController extends Controller
                                                         $check_fourth_step = false;
                                                     }
                                                 }
+                                                $employe_service_files = [
+                                                    'transferred_document' => $request->file('transferred_document'),
+                                                    'previous_joining_document' => $request->file('previous_joining_document')
+                                                ];
                                                 if ($check_fourth_step) {
-                                                    $employe_service_files = [
-                                                        'transferred_document' => $request->file('transferred_document'),
-                                                        'previous_joining_document' => $request->file('previous_joining_document')
-                                                    ];
-                                                    $check_service_files = EmployeMethod::uploadEmployeFiles($employe_service_files, $save_employe->id);
-                                                    $check = $check_service_files[0];
-                                                    $employe_service_files = $check_service_files[1];
-                                                    if ($check) {
-                                                        if (EmployeMethod::uploadFileDatabase_2('employe_service_record', $employe_service_files, 'employe_id', $save_employe->id)) {
-                                                            $check_fourth_step == true;
-                                                        } else {
-                                                            $check_fourth_step = false;
+                                                    if ($request->isServiceRecord == "true") {
+                                                        $check_service_files = EmployeMethod::uploadEmployeFiles($employe_service_files, $save_employe->id);
+                                                        $check = $check_service_files[0];
+                                                        $employe_service_files = $check_service_files[1];
+                                                        if ($check) {
+                                                            if (EmployeMethod::uploadFileDatabase_2('employe_service_record', $employe_service_files, 'employe_id', $save_employe->id)) {
+                                                                $check_fourth_step == true;
+                                                            } else {
+                                                                $check_fourth_step = false;
+                                                            }
                                                         }
                                                     }
                                                 }
