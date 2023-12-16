@@ -154,7 +154,7 @@ class EmployeeRegistrationController extends Controller
         $status = 400;
         $message = [];
         $error_message = [
-            "required" => ':attribute Is Required Field',
+            "required" => ':attribute Is Required Field',w
             'email' => ':attribute Only accepts Email Type',
             'max' => 'File Size Only 3mb',
             'regex' => 'Enter A Valid :attribute ',

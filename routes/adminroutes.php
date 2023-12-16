@@ -15,7 +15,7 @@ Route::middleware('auth:admin_api')->group(function () {
     // Admin Profile
     Route::get('/admin-profile', [AdminAuthController::class, 'profile']);
     // Employe Register
-    Route::post('/admin-employe-register', [EmployeeRegistrationController::class, 'register']);
+    Route::post('/admin-employe-register', [EmployeeRegistrationController::class, 'registration']);
 
     // Admin Logout
     Route::get('/admin-logout', [AdminAuthController::class, 'logout']);
