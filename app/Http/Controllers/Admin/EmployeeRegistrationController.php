@@ -325,10 +325,10 @@ class EmployeeRegistrationController extends Controller
                                     "employe_name" => 'employe_name',
                                     "employe_designation" => 'employe_designation',
                                     "service_status" => '1',
-                                    "employe_phone" => '7002142545',
+                                    "employe_phone" => '7002142549',
                                     "employe_category" => 'employe_category',
                                     "employe_alt_number" => 'employe_alt_number',
-                                    "employe_email" => 'employe_email_5',
+                                    "employe_email" => 'mirdephawa222@gmail.com',
                                     "employe_profile" => 'employe_profile',
                                     "employe_father_name" => 'employe_father_name',
                                     "employe_mother_name" => 'employe_mother_name',
@@ -524,7 +524,20 @@ class EmployeeRegistrationController extends Controller
                                                     }
                                                 }
                                                 if ($check_fourth_step) {
-                                                    array_push($message, ['Done Service Records', $request->isServiceRecord]);
+                                                    $email_data = [
+                                                        'name' => $save_employe->employe_name,
+                                                        'emp_code' => $save_employe->employe_code,
+                                                        'email' => $save_employe->employe_email,
+                                                        'password' => $password,
+                                                        'subject' => 'Employe Registration '
+                                                    ];
+                                                    $check_email_send = EmailSender::emailSend($email_data, $save_employe->employe_email, 'employe_register');
+                                                    if ($check_email_send) {
+                                                        $status = 200;
+                                                        array_push($message, ['Registration Completed !']);
+                                                    } else {
+                                                        array_push($message, ['Registration Completed But Email Not Send !']);
+                                                    }
                                                 } else {
                                                     if (EmployeMethod::revertEmployeData('employe_service_record', 'employe_id', $save_employe->id)) {
                                                         if (EmployeMethod::revertEmployeData('employe_education_details', 'employe_id', $save_employe->id)) {
