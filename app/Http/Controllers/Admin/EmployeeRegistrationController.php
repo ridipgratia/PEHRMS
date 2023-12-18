@@ -154,7 +154,7 @@ class EmployeeRegistrationController extends Controller
         $status = 400;
         $message = [];
         $error_message = [
-            "required" => ':attribute Is Required Field',w
+            "required" => ':attribute Is Required Field',
             'email' => ':attribute Only accepts Email Type',
             'max' => 'File Size Only 3mb',
             'regex' => 'Enter A Valid :attribute ',
@@ -165,42 +165,43 @@ class EmployeeRegistrationController extends Controller
             [
                 // Personal Validation 
 
-                // "employe_name" => "required",
-                // "employe_designation" => "required",
-                // "service_status" => "required|integer",
-                // "employe_phone" => "required|regex:/^\d{10}$/",
-                // "employe_category" => "required",
-                // "employe_alt_number" => "required|regex:/^\d{10}$/",
-                // "employe_email" => "required|email",
+                "employe_name" => "required",
+                "employe_designation" => "required",
+                "service_status" => "required|integer",
+                "employe_phone" => "required|regex:/^\d{10}$/",
+                "employe_category" => "required",
+                "employe_alt_number" => "required|regex:/^\d{10}$/",
+                "employe_email" => "required|email",
                 "employe_profile" => "required|image|max:3000",
-                // "employe_father_name" => "required",
-                // "employe_mother_name" => "required",
-                // "employe_dob" => "required|date",
+                "employe_father_name" => "required",
+                "employe_mother_name" => "required",
+                "employe_dob" => "required|date",
                 "employe_birth_certificate" => "required|max:3000|mimes:pdf",
-                // "pan_number" => "required",
-                // "aadhar_number" => "required",
-                // "gender" => "required",
-                // "nationality" => "required",
-                // "personal_marks_of_identification" => "required",
-                // "caste" => "required",
-                // "race" => "required",
+                "pan_number" => "required",
+                "aadhar_number" => "required",
+                "gender" => "required",
+                "nationality" => "required",
+                "personal_marks_of_identification" => "required",
+                "caste" => "required",
+                "race" => "required",
                 "pwd_document" => "required|max:3000|mimes:pdf",
-                // "posted_district" => "required|integer",
-                // "posted_block" => "required|integer",
-                // "posted_gp" => "required|integer",
-                // "date_of_order" => "required|date",
+                "posted_district" => "required|integer",
+                "posted_block" => "required|integer",
+                "posted_gp" => "required|integer",
+                "date_of_order" => "required|date",
                 "order_document" => "required|max:3000|mimes:pdf",
-                // "date_of_joining" => "required|date",
+                "date_of_joining" => "required|date",
                 "current_joining_document" => "required|max:3000|mimes:pdf",
-                // "branch" => "required",
-                // "initial_date_of_joining" => "required|date",
+                "branch" => "required",
+                "initial_date_of_joining" => "required|date",
                 "initial_appointment_letter" => "required|max:3000|mimes:pdf",
                 "initial_joining_letter" => "required|max:3000|mimes:pdf",
-                // "state" => "required|integer",
-                // "district" => "required|integer",
-                // "block" => "required|integer",
-                // "gp" => "required|integer",
-                // "address" => "required",
+                "state" => "required|integer",
+                "district" => "required|integer",
+                "block" => "required|integer",
+                "gp" => "required|integer",
+                'current_address' => "required",
+                'permanent_address' => "required",
 
                 // // Service Record Validation If Any
 
@@ -221,17 +222,17 @@ class EmployeeRegistrationController extends Controller
 
                 // // Education Details 
 
-                // "schoolName" => "required",
-                // "boardName" => "required",
-                // "marks" => "required|integer",
-                // "percentageCGPA" => "required",
-                // "passingYear" => "required",
-                // // Intermediate (Class XII)
-                // "interSchoolCollegeName" => "required",
-                // "interBoardName" => "required",
-                // "interMarks" => "required|integer",
-                // "interPercentageCGPA" => "required",
-                // "interPassingYear" => "required",
+                "schoolName" => "required",
+                "boardName" => "required",
+                "marks" => "required|integer",
+                "percentageCGPA" => "required",
+                "passingYear" => "required",
+                // Intermediate (Class XII)
+                "interSchoolCollegeName" => "required",
+                "interBoardName" => "required",
+                "interMarks" => "required|integer",
+                "interPercentageCGPA" => "required",
+                "interPassingYear" => "required",
                 // // Graduate
                 // "graduateSchoolCollegeName" => "required",
                 // "gaduateUniversityName" => "required",
@@ -247,11 +248,11 @@ class EmployeeRegistrationController extends Controller
 
                 // // Bank Details 
 
-                // "account_number" => "required",
-                // "account_name" => "required",
-                // "ifsc_code" => "required",
-                // "bank_name" => "required",
-                // "branch_name" => "required"
+                "account_number" => "required",
+                "account_name" => "required",
+                "ifsc_code" => "required",
+                "bank_name" => "required",
+                "branch_name" => "required"
             ],
             $error_message
         );
@@ -259,24 +260,24 @@ class EmployeeRegistrationController extends Controller
             array_push($message, $validator->errors()->all());
         } else {
             $check_service_records = true;
-            if ($request->isServiceRecord == "true") {
+            if ($request->isServiceRecord) {
                 $service_validator = Validator::make(
                     $request->all(),
                     [
-                        // "promoted_to_curr_des" => "required",
-                        // "promoted_from_curr_des" => "required",
-                        // "bdo_status" => "required|integer",
-                        // "transferred_from_district" => "required|integer",
-                        // "transferred_from_block" => "required|integer",
-                        // "transferred_from_gp" => "required|integer",
-                        // "transferred_to_district" => "required|integer",
-                        // "transferred_to_block" => "required|integer",
-                        // "transferred_to_gp" => "required|integer",
+                        "promoted_to_curr_des" => "required",
+                        "promoted_from_curr_des" => "required",
+                        "bdo_status" => "required|integer",
+                        "transferred_from_district" => "required|integer",
+                        "transferred_from_block" => "required|integer",
+                        "transferred_from_gp" => "required|integer",
+                        "transferred_to_district" => "required|integer",
+                        "transferred_to_block" => "required|integer",
+                        "transferred_to_gp" => "required|integer",
                         "transferred_document" => "required|max:3000|mimes:pdf",
-                        // "transferred_date" => 'required|date',
+                        "transferred_date" => 'required|date',
                         "previous_joining_document" => 'required|max:3000|mimes:pdf',
-                        // "previous_joining_date" => "required|date",
-                        // "service_branch" => 'required|',
+                        "previous_joining_date" => "required|date",
+                        "service_branch" => 'required',
                     ],
                     $error_message
                 );
@@ -297,22 +298,22 @@ class EmployeeRegistrationController extends Controller
                 if ($check_employe_data) {
                     $check_employe_data = EmployeMethod::checkEmployeData('employees', 'employe_phone', $request->employe_phone);
                     if ($check_employe_data) {
-                        $level_code = "ST";
-                        // if ($request->state) {
-                        //     if ($request->district) {
-                        //         if ($request->block) {
-                        //             if ($request->gp) {
-                        //                 $level_code = "GP";
-                        //             } else {
-                        //                 $level_code = "BL";
-                        //             }
-                        //         } else {
-                        //             $level_code = "DT";
-                        //         }
-                        //     } else {
-                        //         $level_code = "ST";
-                        //     }
-                        // }
+                        // $level_code = "ST";
+                        if ($request->state) {
+                            if ($request->district) {
+                                if ($request->block) {
+                                    if ($request->gp) {
+                                        $level_code = "GP";
+                                    } else {
+                                        $level_code = "BL";
+                                    }
+                                } else {
+                                    $level_code = "DT";
+                                }
+                            } else {
+                                $level_code = "ST";
+                            }
+                        }
                         if ($level_code) {
                             $password = EmployeMethod::generatePassword();
                             $emp_code = EmployeMethod::generateEmpCode($level_code);
@@ -358,7 +359,9 @@ class EmployeeRegistrationController extends Controller
                                     "district" => '123',
                                     "block" => '1234',
                                     "gp" => '123',
-                                    "address" => 'address',
+                                    'current_address' => "current address",
+                                    'permanent_address' => "permanent address"
+
                                     // "schoolName" => $request->schoolName,
                                     // "boardName" => $request->boardName,
                                     // "marks" => $request->marks,
@@ -463,7 +466,7 @@ class EmployeeRegistrationController extends Controller
                                                 try {
                                                     $check_is_value = true;
                                                     if ($count_education_error == 2 || $count_education_error == 3) {
-                                                        if ($check_education[$count_education_error - 2] == "false") {
+                                                        if ($check_education[$count_education_error - 2] == false) {
                                                             $check_is_value = false;
                                                         }
                                                     }
@@ -481,7 +484,7 @@ class EmployeeRegistrationController extends Controller
                                             }
                                             if ($check_thrid_step) {
                                                 $check_fourth_step = true;
-                                                if ($request->isServiceRecord == "true") {
+                                                if ($request->isServiceRecord) {
                                                     try {
                                                         $save_service = EmployeServiceModel::create([
                                                             'employe_id' => $save_employe->id,
@@ -623,7 +626,7 @@ class EmployeeRegistrationController extends Controller
                 }
             }
         }
-        return response()->json(['status' => $status, 'message' => $message]);
+        return response()->json(['status' => $status, 'message' => $message], 200);
     }
     public function getDistricts(Request $request)
     {

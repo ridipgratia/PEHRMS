@@ -3,6 +3,7 @@
 namespace App\MyMethod;
 
 use Exception;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 
 class AdminMethod
@@ -45,6 +46,61 @@ class AdminMethod
             return $gram_panchayats;
         } catch (Exception $err) {
             return false;
+        }
+    }
+    // get All Employees List
+    public static function getAllEmployees()
+    {
+        try {
+            $employees = DB::table('employees')
+                ->select(
+                    'id',
+                    'employe_code',
+                    'employe_name',
+                    'employe_designation',
+                    'service_status'
+                )
+                ->get();
+            // $employees = $employees->map(function ($employe) {
+            //     $employe->id = Crypt::encryptString($employe->id);
+            //     return $employe;
+            // });
+            return $employees;
+        } catch (Exception $err) {
+            return NULL;
+        }
+    }
+    // View Particular Employe Details
+    public static function getEmployeeAllDetails($id)
+    {
+        try {
+            $employee_details = DB::table('employees as main_table')
+                ->select(
+                    'main_table.*',
+                    'main_table.id as main_id',
+                    'emp_bank.*',
+                    'emp_service.*'
+                )
+                ->where('main_table.id', $id)
+                ->leftJoin('employe_bank_details as emp_bank', 'emp_bank.employe_id', '=', 'main_table.id')
+                ->leftJoin('employe_service_record as emp_service', 'emp_service.employe_id', '=', 'main_table.id')
+                ->get();
+            if (count($employee_details) != 0) {
+                $employee_details[0]->password = NULL;
+                try {
+                    $employee_education_details = DB::table('employe_education_details')
+                        ->where('employe_id', $id)
+                        ->get();
+                    $employee_details[1] = $employee_education_details;
+                    return [true, $employee_details];
+                } catch (Exception $err) {
+                    return [false, 'Server Error Please Try Later'];
+                }
+            } else {
+                return [false, 'Employe Details Not Found'];
+            }
+        } catch (Exception $err) {
+            return [true, 'Server Error Please Try Later !'];
         }
     }
 }

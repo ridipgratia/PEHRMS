@@ -47,6 +47,11 @@ class EmployeesModel extends Model
         'district',
         'block',
         'gp',
-        'address',
+        'current_address',
+        'permanent_address'
+
+    ];
+    protected $hidden = [
+        'password'
     ];
 }
