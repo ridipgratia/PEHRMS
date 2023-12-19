@@ -52,14 +52,18 @@ class AdminMethod
     public static function getAllEmployees()
     {
         try {
-            $employees = DB::table('employees')
+            $employees = DB::table('employees as main_table')
                 ->select(
-                    'id',
-                    'employe_code',
-                    'employe_name',
-                    'employe_designation',
-                    'service_status'
+                    'main_table.id as main_id',
+                    'main_table.employe_code',
+                    'main_table.employe_name',
+                    'main_table.employe_designation',
+                    'main_table.service_status',
+                    'main_table.employe_phone',
+                    'main_table.employe_email',
+                    'desig_table.designation_name as designation_name'
                 )
+                ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.employe_designation')
                 ->get();
             // $employees = $employees->map(function ($employe) {
             //     $employe->id = Crypt::encryptString($employe->id);

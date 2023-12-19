@@ -18,7 +18,7 @@ class CreateEmployeesTable extends Migration
             $table->string('employe_code')->unique();
             $table->string('password');
             $table->string('employe_name');
-            $table->string('employe_designation');
+            $table->integer('employe_designation');
             $table->integer('service_status');
             $table->string('employe_phone')->unique();
             $table->string('employe_category');
@@ -44,15 +44,17 @@ class CreateEmployeesTable extends Migration
             $table->string('order_document');
             $table->date('date_of_joining');
             $table->string('current_joining_document');
-            $table->string('branch');
+            $table->integer('branch');
             $table->date('initial_date_of_joining');
             $table->string('initial_appointment_letter');
             $table->string('initial_joining_letter');
-            $table->integer('state')->default(999);
-            $table->integer('district');
-            $table->integer('block');
-            $table->integer('gp');
-            $table->string('address');
+            $table->integer('state')->default(999); // Home State
+            $table->integer('district'); //Home District 
+            $table->integer('block'); // Home Block
+            $table->integer('gp'); // Home GP
+            // $table->string('address');
+            $table->text('current_address');
+            $table->text('permanent_address');
             $table->timestamps();
         });
     }

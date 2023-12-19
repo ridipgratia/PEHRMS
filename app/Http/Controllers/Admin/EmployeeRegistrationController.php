@@ -164,9 +164,9 @@ class EmployeeRegistrationController extends Controller
             $request->all(),
             [
                 // Personal Validation 
-
+                "level_id" => "required",
                 "employe_name" => "required",
-                "employe_designation" => "required",
+                "employe_designation" => "required|integer",
                 "service_status" => "required|integer",
                 "employe_phone" => "required|regex:/^\d{10}$/",
                 "employe_category" => "required",
@@ -260,12 +260,13 @@ class EmployeeRegistrationController extends Controller
             array_push($message, $validator->errors()->all());
         } else {
             $check_service_records = true;
-            if ($request->isServiceRecord) {
+            $isServiceRecordCheck = filter_var($request->isServiceRecord, FILTER_VALIDATE_BOOLEAN);
+            if ($isServiceRecordCheck) {
                 $service_validator = Validator::make(
                     $request->all(),
                     [
-                        "promoted_to_curr_des" => "required",
-                        "promoted_from_curr_des" => "required",
+                        "promoted_to_curr_des" => "required|integer",
+                        "promoted_from_curr_des" => "required|integer",
                         "bdo_status" => "required|integer",
                         "transferred_from_district" => "required|integer",
                         "transferred_from_block" => "required|integer",
@@ -298,22 +299,32 @@ class EmployeeRegistrationController extends Controller
                 if ($check_employe_data) {
                     $check_employe_data = EmployeMethod::checkEmployeData('employees', 'employe_phone', $request->employe_phone);
                     if ($check_employe_data) {
-                        // $level_code = "ST";
-                        if ($request->state) {
-                            if ($request->district) {
-                                if ($request->block) {
-                                    if ($request->gp) {
-                                        $level_code = "GP";
-                                    } else {
-                                        $level_code = "BL";
-                                    }
-                                } else {
-                                    $level_code = "DT";
-                                }
-                            } else {
-                                $level_code = "ST";
-                            }
+                        $level_id = $request->level_id;
+                        $positions = [
+                            'ST',
+                            'DT',
+                            'BL',
+                            'GP'
+                        ];
+                        $level_code = null;
+                        if ($level_id < 5 && $level_id > 0) {
+                            $level_code = $positions[$level_id - 1];
                         }
+                        // if ($request->state) {
+                        //     if ($request->district) {
+                        //         if ($request->block) {
+                        //             if ($request->gp) {
+                        //                 $level_code = "GP";
+                        //             } else {
+                        //                 $level_code = "BL";
+                        //             }
+                        //         } else {
+                        //             $level_code = "DT";
+                        //         }
+                        //     } else {
+                        //         $level_code = "ST";
+                        //     }
+                        // }
                         if ($level_code) {
                             $password = EmployeMethod::generatePassword();
                             $emp_code = EmployeMethod::generateEmpCode($level_code);
@@ -322,61 +333,64 @@ class EmployeeRegistrationController extends Controller
                             try {
                                 $save_employe = EmployeesModel::create([
                                     'employe_code' => $emp_code . (DB::select('select id from employees') == null ? 0 : DB::select('select id from employees order by id desc limit 1')[0]->id),
-                                    "password" => Hash::make('$password'),
-                                    "employe_name" => 'employe_name',
-                                    "employe_designation" => 'employe_designation',
-                                    "service_status" => '1',
-                                    "employe_phone" => '7002142549',
-                                    "employe_category" => 'employe_category',
-                                    "employe_alt_number" => 'employe_alt_number',
-                                    "employe_email" => 'mirdephawa222@gmail.com',
-                                    "employe_profile" => 'employe_profile',
-                                    "employe_father_name" => 'employe_father_name',
-                                    "employe_mother_name" => 'employe_mother_name',
-                                    "employe_dob" => '01-02-23',
-                                    "employe_birth_certificate" => 'employe_birth_certificate',
-                                    "pan_number" => 'pan_number',
-                                    "aadhar_number" => 'aadhar_number',
-                                    "gender" => 'gender',
-                                    "nationality" => 'nationality',
-                                    "personal_marks_of_identification" => 'personal_marks_of_identification',
-                                    "caste" => 'caste',
-                                    "race" => 'race',
-                                    "pwd_document" => 'pwd_document',
-                                    "posted_district" => '123',
-                                    "posted_block" => '1234',
-                                    "posted_gp" => '1234',
-                                    "date_of_order" => '02-12-23',
-                                    "order_document" => 'order_document',
-                                    "date_of_joining" => '02-12-23',
-                                    "joining_document" => 'joining_document',
-                                    "current_joining_document" => 'current_joining_document',
-                                    "branch" => 'branch',
-                                    "initial_date_of_joining" => '02-12-23',
-                                    "initial_appointment_letter" => 'initial_appointment_letter',
-                                    "initial_joining_letter" => 'initial_joining_letter',
-                                    "state" => '999',
-                                    "district" => '123',
-                                    "block" => '1234',
-                                    "gp" => '123',
-                                    'current_address' => "current address",
-                                    'permanent_address' => "permanent address"
+                                    "password" => Hash::make($password),
+                                    "employe_name" => $request->employe_name,
+                                    "employe_designation" => $request->employe_designation,
+                                    "service_status" => $request->service_status,
+                                    "employe_phone" => $request->employe_phone,
+                                    "employe_category" => $request->employe_category,
+                                    "employe_alt_number" => $request->employe_alt_number,
+                                    "employe_email" => $request->employe_email,
+                                    "employe_profile" => "file",
+                                    "employe_father_name" => $request->employe_father_name,
+                                    "employe_mother_name" => $request->employe_mother_name,
+                                    "employe_dob" => $request->employe_dob,
+                                    "employe_birth_certificate" => "file",
+                                    "pan_number" => $request->pan_number,
+                                    "aadhar_number" => $request->aadhar_number,
+                                    "gender" => $request->gender,
+                                    "nationality" => $request->nationality,
+                                    "personal_marks_of_identification" => $request->personal_marks_of_identification,
+                                    "caste" => $request->caste,
+                                    "race" => $request->race,
+                                    "pwd_document" => $request->pwd_document,
+                                    "posted_district" => $request->posted_district,
+                                    "posted_block" => $request->posted_block,
+                                    "posted_gp" => $request->posted_gp,
+                                    "date_of_order" => $request->date_of_order,
+                                    "order_document" => "file",
+                                    "date_of_joining" => $request->date_of_joining,
+                                    "joining_document" => "file",
+                                    "current_joining_document" => "file",
+                                    "branch" => $request->branch,
+                                    "initial_date_of_joining" => $request->initial_date_of_joining,
+                                    "initial_appointment_letter" => "file",
+                                    "initial_joining_letter" => "file",
+                                    "state" => $request->state,
+                                    "district" => $request->district,
+                                    "block" => $request->block,
+                                    "gp" => $request->gp,
+                                    'current_address' => $request->current_address,
+                                    'permanent_address' => $request->permanent_address,
 
                                     // "schoolName" => $request->schoolName,
                                     // "boardName" => $request->boardName,
                                     // "marks" => $request->marks,
                                     // "percentageCGPA" => $request->percentageCGPA,
                                     // "passingYear" => $request->passingYear,
+
                                     // "interSchoolCollegeName" => $request->interSchoolCollegeName,
                                     // "interBoardName" => $request->interBoardName,
                                     // "interMarks" => $request->interMarks,
                                     // "interPercentageCGPA" => $request->interPercentageCGPA,
                                     // "interPassingYear" => $request->interPassingYear,
+
                                     // "graduateSchoolCollegeName" => $request->graduateSchoolCollegeName,
                                     // "gaduateUniversityName" => $request->gaduateUniversityName,
                                     // "graduateMarks" => $request->graduateMarks,
                                     // "graduatePercentageCGPA" => $request->graduatePercentageCGPA,
                                     // "graduatePassingYear" => $request->graduatePassingYear,
+
                                     // "postSchoolCollegeName" => $request->postSchoolCollegeName,
                                     // "postUniversityName" => $request->postUniversityName,
                                     // "postMarks" => $request->postMarks,
@@ -411,11 +425,11 @@ class EmployeeRegistrationController extends Controller
                                         try {
                                             $save_bank = EmployeBankModel::create([
                                                 'employe_id' => $save_employe->id,
-                                                'account_number' => 'account_number',
-                                                'account_name' => 'account_name',
-                                                'ifsc_code' => 'ifsc_code',
-                                                'bank_name' => 'bank_name',
-                                                'branch_name' => 'branch_name',
+                                                'account_number' => $request->account_number,
+                                                'account_name' => $request->account_name,
+                                                'ifsc_code' => $request->ifsc_code,
+                                                'bank_name' => $request->bank_name,
+                                                'branch_name' => $request->branch_name,
                                             ]);
                                             $check_second_step = true;
                                         } catch (Exception $err) {
@@ -426,41 +440,41 @@ class EmployeeRegistrationController extends Controller
                                             $main_education_details = [
                                                 'matric' => [
                                                     'employe_id' => $save_employe->id,
-                                                    'employe_degree' => 'matric 1',
-                                                    'board_name' => 'matric baord 1',
-                                                    'marks' => '123',
-                                                    'percentage' => '123',
-                                                    'passing_year' => 'matric passing year'
+                                                    'employe_degree' => $request->schoolName,
+                                                    'board_name' => $request->boardName,
+                                                    'marks' => $request->marks,
+                                                    'percentage' => $request->percentageCGPA,
+                                                    'passing_year' => $request->passingYear,
                                                 ],
                                                 'hs' => [
                                                     'employe_id' => $save_employe->id,
-                                                    'employe_degree' => 'hs 1',
-                                                    'board_name' => 'hs baord 1',
-                                                    'marks' => '123',
-                                                    'percentage' => '123',
-                                                    'passing_year' => 'hs passing year'
+                                                    'employe_degree' => $request->interSchoolCollegeName,
+                                                    'board_name' => $request->interBoardName,
+                                                    'marks' => $request->interMarks,
+                                                    'percentage' => $request->interPercentageCGPA,
+                                                    'passing_year' => $request->interPassingYear,
                                                 ],
                                                 'isGraduate' => [
                                                     'employe_id' => $save_employe->id,
-                                                    'employe_degree' => 'graduation 1',
-                                                    'board_name' => 'graduation baord 1',
-                                                    'marks' => '123',
-                                                    'percentage' => '123',
-                                                    'passing_year' => 'graduation passing year'
+                                                    'employe_degree' => $request->graduateSchoolCollegeName,
+                                                    'board_name' => $request->gaduateUniversityName,
+                                                    'marks' => $request->graduateMarks,
+                                                    'percentage' => $request->graduatePercentageCGPA,
+                                                    'passing_year' => $request->graduatePassingYear,
                                                 ],
                                                 'isPostGraduate' => [
                                                     'employe_id' => $save_employe->id,
-                                                    'employe_degree' => 'post_graduation 1',
-                                                    'board_name' => 'post_graduation baord 1',
-                                                    'marks' => '123',
-                                                    'percentage' => '122',
-                                                    'passing_year' => 'post_graduation passing year'
+                                                    'employe_degree' => $request->postSchoolCollegeName,
+                                                    'board_name' => $request->postUniversityName,
+                                                    'marks' => $request->postMarks,
+                                                    'percentage' => $request->postPercentageCGPA,
+                                                    'passing_year' => $request->postPassingYear,
                                                 ],
                                             ];
                                             $count_education_error = 0;
                                             $check_education = [
-                                                $request->isGraduate,
-                                                $request->isPostGraduate
+                                                filter_var($request->isGraduate, FILTER_VALIDATE_BOOLEAN),
+                                                filter_var($request->isPostGraduate, FILTER_VALIDATE_BOOLEAN)
                                             ];
                                             foreach ($main_education_details as $main_education_key) {
                                                 try {
@@ -484,24 +498,24 @@ class EmployeeRegistrationController extends Controller
                                             }
                                             if ($check_thrid_step) {
                                                 $check_fourth_step = true;
-                                                if ($request->isServiceRecord) {
+                                                if ($isServiceRecordCheck) {
                                                     try {
                                                         $save_service = EmployeServiceModel::create([
                                                             'employe_id' => $save_employe->id,
-                                                            'promoted_to_curr_des' => 'promted',
-                                                            'promoted_from_curr_des' => 'promted',
-                                                            'bdo_status' => 'promted',
-                                                            'transferred_from_district' => '123',
-                                                            'transferred_from_block' => '1234',
-                                                            'transferred_from_gp' => '12345',
-                                                            'transferred_to_district' => '123',
-                                                            'transferred_to_block' => '1234',
-                                                            'transferred_to_gp' => '12345',
-                                                            'transferred_document' => 'promted',
-                                                            'transferred_date' => '01-02-23',
-                                                            'previous_joining_document' => 'promted',
-                                                            'previous_joining_date' => '01-02-23',
-                                                            'service_branch' => 'promted',
+                                                            'promoted_to_curr_des' => $request->promoted_to_curr_des,
+                                                            'promoted_from_curr_des' => $request->promoted_from_curr_des,
+                                                            'bdo_status' => $request->bdo_status,
+                                                            'transferred_from_district' => $request->transferred_from_district,
+                                                            'transferred_from_block' => $request->transferred_from_block,
+                                                            'transferred_from_gp' => $request->transferred_from_gp,
+                                                            'transferred_to_district' => $request->transferred_to_district,
+                                                            'transferred_to_block' => $request->transferred_to_block,
+                                                            'transferred_to_gp' => $request->transferred_to_gp,
+                                                            'transferred_document' => "file",
+                                                            'transferred_date' => $request->transferred_date,
+                                                            'previous_joining_document' => "file",
+                                                            'previous_joining_date' => $request->previous_joining_date,
+                                                            'service_branch' => $request->service_branch,
                                                         ]);
                                                         $check_fourth_step = true;
                                                     } catch (Exception $err) {
@@ -513,7 +527,7 @@ class EmployeeRegistrationController extends Controller
                                                     'previous_joining_document' => $request->file('previous_joining_document')
                                                 ];
                                                 if ($check_fourth_step) {
-                                                    if ($request->isServiceRecord == "true") {
+                                                    if ($isServiceRecordCheck) {
                                                         $check_service_files = EmployeMethod::uploadEmployeFiles($employe_service_files, $save_employe->id);
                                                         $check = $check_service_files[0];
                                                         $employe_service_files = $check_service_files[1];
@@ -628,6 +642,8 @@ class EmployeeRegistrationController extends Controller
         }
         return response()->json(['status' => $status, 'message' => $message], 200);
     }
+
+    // Get All Districts
     public function getDistricts(Request $request)
     {
         $status = 400;
@@ -641,6 +657,7 @@ class EmployeeRegistrationController extends Controller
         }
         return response()->json(['status' => $status, 'message' => $message], 200);
     }
+    // Get All Blocks By District ID
     public function getBlocks(Request $request)
     {
         $status = 400;
@@ -663,6 +680,7 @@ class EmployeeRegistrationController extends Controller
         }
         return response()->json(['status' => $status, 'message' => $message], 200);
     }
+    // Get All GPS By Block ID
     public function getGPs(Request $request)
     {
         $status = 400;
@@ -684,5 +702,30 @@ class EmployeeRegistrationController extends Controller
             $message = "Didn't Recieve Block Code ";
         }
         return response()->json(['status' => $status, 'message' => $message], 200);
+    }
+    // Get All Designations
+    public function getDesignations(Request $request)
+    {
+        try {
+            $designations = DB::table('designations')
+                ->orderBy('designation_name', 'asc')
+                ->select('id', 'designation_name')
+                ->get();
+            return response()->json(['status' => 200, 'designations' => $designations]);
+        } catch (Exception $err) {
+            return response()->json(['status' => 400, 'message' => 'Server Error Please Try Later !']);
+        }
+    }
+    // Get All Branches
+    public function getBranches(Request $request)
+    {
+        try {
+            $branches = DB::table('branches')
+                ->orderBy('branch_name', 'asc')
+                ->get();
+            return response()->json(['status' => 400, 'branches' => $branches]);
+        } catch (Exception $err) {
+            return response()->json(['status' => 400, 'message' => 'Server Error Please try Later !']);
+        }
     }
 }
