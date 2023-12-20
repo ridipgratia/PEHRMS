@@ -16,7 +16,7 @@ Route::middleware('auth:admin_api')->group(function () {
     // Admin Profile
     Route::get('/admin-profile', [AdminAuthController::class, 'profile']);
 
-    
+
     // Admin Logout
     Route::get('/admin-logout', [AdminAuthController::class, 'logout']);
 });
@@ -33,6 +33,8 @@ Route::post('/admin-get-gps', [EmployeeRegistrationController::class, 'getGPs'])
 Route::get('/admin-get-designations', [EmployeeRegistrationController::class, 'getDesignations']);
 // Get All Branches
 Route::get('/admin-get-branches', [EmployeeRegistrationController::class, 'getBranches']);
+// Get All Service Status
+Route::get('/admin-get-service-status', [EmployeeRegistrationController::class, 'getServices']);
 // View All Registered Employees 
 Route::get('/admin-all-employees', [AllEmployeeController::class, 'allEmployees']);
 // View Specific Employee Details

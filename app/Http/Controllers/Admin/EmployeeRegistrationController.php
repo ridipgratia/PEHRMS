@@ -711,9 +711,9 @@ class EmployeeRegistrationController extends Controller
                 ->orderBy('designation_name', 'asc')
                 ->select('id', 'designation_name')
                 ->get();
-            return response()->json(['status' => 200, 'designations' => $designations]);
+            return response()->json(['status' => 200, 'designations' => $designations], 200);
         } catch (Exception $err) {
-            return response()->json(['status' => 400, 'message' => 'Server Error Please Try Later !']);
+            return response()->json(['status' => 400, 'message' => 'Server Error Please Try Later !'], 200);
         }
     }
     // Get All Branches
@@ -723,9 +723,24 @@ class EmployeeRegistrationController extends Controller
             $branches = DB::table('branches')
                 ->orderBy('branch_name', 'asc')
                 ->get();
-            return response()->json(['status' => 400, 'branches' => $branches]);
+            return response()->json(['status' => 400, 'branches' => $branches], 200);
         } catch (Exception $err) {
-            return response()->json(['status' => 400, 'message' => 'Server Error Please try Later !']);
+            return response()->json(['status' => 400, 'message' => 'Server Error Please try Later !'], 200);
+        }
+    }
+    // Get All Service Status
+    public function getServices(Request $request)
+    {
+        try {
+            $service_status = DB::table('service_status')
+                ->select(
+                    'id',
+                    'service_name'
+                )
+                ->get();
+            return response()->json(['status' => 200, 'message' => $service_status], 200);
+        } catch (Exception $err) {
+            return response()->json(['status' => 400, 'message' => 'Server Side Error Please try Later !']);
         }
     }
 }
