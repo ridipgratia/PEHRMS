@@ -35,6 +35,8 @@ Route::get('/admin-get-designations', [EmployeeRegistrationController::class, 'g
 Route::get('/admin-get-branches', [EmployeeRegistrationController::class, 'getBranches']);
 // Get All Service Status
 Route::get('/admin-get-service-status', [EmployeeRegistrationController::class, 'getServices']);
+// Get All Caste 
+Route::get('/admin-get-caste', [EmployeeRegistrationController::class, 'getCaste']);
 // View All Registered Employees 
 Route::get('/admin-all-employees', [AllEmployeeController::class, 'allEmployees']);
 // View Specific Employee Details

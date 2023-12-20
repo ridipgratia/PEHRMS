@@ -738,7 +738,22 @@ class EmployeeRegistrationController extends Controller
                     'service_name'
                 )
                 ->get();
-            return response()->json(['status' => 200, 'message' => $service_status], 200);
+            return response()->json(['status' => 200, 'service_status' => $service_status], 200);
+        } catch (Exception $err) {
+            return response()->json(['status' => 400, 'message' => 'Server Side Error Please try Later !']);
+        }
+    }
+    // Get All Caste 
+    public function getCaste(Request $request)
+    {
+        try {
+            $caste_list = DB::table('caste_list')
+                ->select(
+                    'id',
+                    'caste'
+                )
+                ->get();
+            return response()->json(['status' => 200, 'caste_list' => $caste_list], 200);
         } catch (Exception $err) {
             return response()->json(['status' => 400, 'message' => 'Server Side Error Please try Later !']);
         }
