@@ -19,7 +19,7 @@ class CreateEmployeServiceRecord extends Migration
             $table->string('promoted_to_curr_des');
             $table->string('promoted_from_curr_des');
 
-            $table->string('bdo_status'); // Whether In charge BDO/ GP secretary (select in charge BDO status
+            $table->integer('bdo_status'); // Whether In charge BDO/ GP secretary (select in charge BDO status
             $table->integer('transferred_from_district');
             $table->integer('transferred_from_block');
             $table->integer('transferred_from_gp');
@@ -30,7 +30,7 @@ class CreateEmployeServiceRecord extends Migration
             $table->date('transferred_date');
             $table->string('previous_joining_document');
             $table->date('previous_joining_date');
-            $table->string('service_branch');
+            $table->integer('service_branch');
             $table->timestamps();
         });
     }

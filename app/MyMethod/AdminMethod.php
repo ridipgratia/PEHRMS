@@ -110,17 +110,73 @@ class AdminMethod
     //     }
     // }
     // Get Employee Dat Table Wise
-    public static function getEmployeeDataTable($main_id, $table)
+    public static function getEmployeeDataTable($main_id, $table, $step_id)
     {
-        $status = 400;
-        $message = null;
         try {
-            $employee_data = DB::table($table)
-                ->where('id', $main_id)
-                ->get();
+            $employee_data = [];
+            if ($step_id == 1) {
+                $employee_data = DB::table($table . ' as main_table')
+                    ->select(
+                        'main_table.*',
+                        'main_table.id as main_id',
+                        'desig_table.designation_name as designation_name',
+                        'ser_status_table.service_name as service_name',
+                        'district_table.district_name as posted_district_name',
+                        'block_table.block_name as posted_block_name',
+                        'gp.gram_panchyat_name as posted_gram_panchyat_name',
+                        'branche_table.branch_name as branch_name',
+                        'district_table_1.district_name as district_name',
+                        'block_table_1.block_name as block_name',
+                        'gp_1.gram_panchyat_name as gram_panchyat_name'
+                    )
+                    ->where('main_table.id', $main_id)
+                    ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.employe_designation')
+                    ->join('service_status as ser_status_table', 'ser_status_table.id', '=', 'main_table.service_status')
+                    ->join('districts as district_table', 'district_table.district_code', '=', 'main_table.posted_district')
+                    ->join('blocks as block_table', 'block_table.block_id', '=', 'main_table.posted_block')
+                    ->join('gram_panchyats as gp', 'gp.gram_panchyat_id', '=', 'main_table.posted_gp')
+                    ->join('branches as branche_table', 'branche_table.id', '=', 'main_table.branch')
+                    ->join('districts as district_table_1', 'district_table_1.district_code', '=', 'main_table.district')
+                    ->join('blocks as block_table_1', 'block_table_1.block_id', '=', 'main_table.block')
+                    ->join('gram_panchyats as gp_1', 'gp_1.gram_panchyat_id', '=', 'main_table.gp')
+                    ->get();
+                if (count($employee_data) != 0) {
+                    $employee_data[0]->password = NULL;
+                    $employee_data[0]->state = "Assam";
+                }
+            } else if ($step_id == 4) {
+                $employee_data = DB::table($table . ' as main_table')
+                    ->select(
+                        'main_table.*',
+                        'desig_table.designation_name as promoted_to_designation_name',
+                        'desig_table_1.designation_name as promoted_from_designation_name',
+                        'district_table.district_name as transferred_from_district_name',
+                        'block_table.block_name as transferred_from_block_name',
+                        'gp.gram_panchyat_name as transferred_from_gp_name',
+                        'district_table_1.district_name as transferred_to_district_name',
+                        'block_table_1.block_name as transferred_to_block_name',
+                        'gp_1.gram_panchyat_name as transferred_to_gp_name',
+                        'ser_status_table.service_name as service_name',
+                    )
+                    ->where('main_table.employe_id', $main_id)
+                    ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.promoted_to_curr_des')
+                    ->join('designations as desig_table_1', 'desig_table_1.id', '=', 'main_table.promoted_from_curr_des')
+                    ->join('districts as district_table', 'district_table.district_code', '=', 'main_table.transferred_from_district')
+                    ->join('blocks as block_table', 'block_table.block_id', '=', 'main_table.transferred_from_block')
+                    ->join('gram_panchyats as gp', 'gp.gram_panchyat_id', '=', 'main_table.transferred_from_gp')
+                    ->join('districts as district_table_1', 'district_table_1.district_code', '=', 'main_table.transferred_to_district')
+                    ->join('blocks as block_table_1', 'block_table_1.block_id', '=', 'main_table.transferred_to_block')
+                    ->join('gram_panchyats as gp_1', 'gp_1.gram_panchyat_id', '=', 'main_table.transferred_to_gp')
+                    ->join('service_status as ser_status_table', 'ser_status_table.id', '=', 'main_table.service_branch')
+                    ->get();
+            } else {
+                $employee_data = DB::table($table)
+                    ->where('employe_id', $main_id)
+                    ->get();
+            }
+            return $employee_data;
         } catch (Exception $err) {
-            $message = "Server Error Please Try Later !";
+            return NULL;
         }
-        return [$status, $message];
     }
 }

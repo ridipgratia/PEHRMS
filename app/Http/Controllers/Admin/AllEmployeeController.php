@@ -46,6 +46,22 @@ class AllEmployeeController extends Controller
             'employe_education_details',
             'employe_service_record'
         ];
-        return response()->json(['status' => 400, 'message' => 'Ok'], 200);
+        $status = 400;
+        $message = null;
+        if ($request->main_id && $request->step_id) {
+            $employee_data = AdminMethod::getEmployeeDataTable($employee_id, $tables[$step_id - 1], $step_id);
+            if ($employee_data == NULL) {
+                $message = "Server Error Please Try Again !";
+            } else {
+                if (count($employee_data) == 0) {
+                    $message = "Data Not Found !";
+                } else {
+                    return response()->json(['status' => 200, "data" => $employee_data], 200);
+                }
+            }
+        } else {
+            $message = "Required Input Are Not Found ";
+        }
+        return response()->json(['status' => $status, 'message' => $message], 200);
     }
 }
