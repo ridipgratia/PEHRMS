@@ -22,16 +22,30 @@ class AllEmployeeController extends Controller
         return response()->json(['status' => 400, 'message' => $message], 200);
     }
     // View Specific Employee Details
-    public function viewEmployee(Request $request)
+    // public function viewEmployee(Request $request)
+    // {
+    //     $message = null;
+    //     $status = 400;
+    //     $id = $request->id;
+    //     $employee_details = AdminMethod::getEmployeeAllDetails($id);
+    //     if ($employee_details[0]) {
+    //         $status = 200;
+    //         return response()->json(['status' => $status, 'employee_details' => $employee_details[1]]);
+    //     }
+    //     return response()->json(['status' => $status, 'message' => $employee_details[1]]);
+    // }
+
+    // Get All Employee Table Wise 
+    public function getAllEmployeeDetails(Request $request)
     {
-        $message = null;
-        $status = 400;
-        $id = $request->id;
-        $employee_details = AdminMethod::getEmployeeAllDetails($id);
-        if ($employee_details[0]) {
-            $status = 200;
-            return response()->json(['status' => $status, 'employee_details' => $employee_details[1]]);
-        }
-        return response()->json(['status' => $status, 'message' => $employee_details[1]]);
+        $employee_id = $request->main_id;
+        $step_id = $request->step_id;
+        $tables = [
+            'employees',
+            'employe_bank_details',
+            'employe_education_details',
+            'employe_service_record'
+        ];
+        return response()->json(['status' => 400, 'message' => 'Ok'], 200);
     }
 }
