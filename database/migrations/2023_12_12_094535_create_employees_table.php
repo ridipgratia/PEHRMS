@@ -34,8 +34,8 @@ class CreateEmployeesTable extends Migration
             $table->string('gender');
             $table->string('nationality');
             $table->string('personal_marks_of_identification')->nullable();
-            $table->string('caste');
-            $table->string('race');
+            $table->integer('caste');
+            $table->integer('race');
             $table->string('pwd_document')->nullable();
             $table->integer('posted_district');
             $table->integer('posted_block');

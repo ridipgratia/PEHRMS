@@ -16,8 +16,8 @@ class CreateEmployeServiceRecord extends Migration
         Schema::create('employe_service_record', function (Blueprint $table) {
             $table->id();
             $table->integer('employe_id');
-            $table->string('promoted_to_curr_des');
-            $table->string('promoted_from_curr_des');
+            $table->integer('promoted_to_curr_des');
+            $table->integer('promoted_from_curr_des');
 
             $table->integer('bdo_status'); // Whether In charge BDO/ GP secretary (select in charge BDO status
             $table->integer('transferred_from_district');

@@ -182,8 +182,8 @@ class EmployeeRegistrationController extends Controller
                 "gender" => "required",
                 "nationality" => "required",
                 "personal_marks_of_identification" => "required",
-                "caste" => "required",
-                "race" => "required",
+                "caste" => "required|integer",
+                "race" => "required|integer",
                 "pwd_document" => "required|max:3000|mimes:pdf",
                 "posted_district" => "required|integer",
                 "posted_block" => "required|integer",
@@ -192,7 +192,7 @@ class EmployeeRegistrationController extends Controller
                 "order_document" => "required|max:3000|mimes:pdf",
                 "date_of_joining" => "required|date",
                 "current_joining_document" => "required|max:3000|mimes:pdf",
-                "branch" => "required",
+                "branch" => "required|integer",
                 "initial_date_of_joining" => "required|date",
                 "initial_appointment_letter" => "required|max:3000|mimes:pdf",
                 "initial_joining_letter" => "required|max:3000|mimes:pdf",
@@ -278,7 +278,7 @@ class EmployeeRegistrationController extends Controller
                         "transferred_date" => 'required|date',
                         "previous_joining_document" => 'required|max:3000|mimes:pdf',
                         "previous_joining_date" => "required|date",
-                        "service_branch" => 'required',
+                        "service_branch" => 'required|integer',
                     ],
                     $error_message
                 );
