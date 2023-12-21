@@ -183,7 +183,7 @@ class EmployeeRegistrationController extends Controller
                 "nationality" => "required",
                 "personal_marks_of_identification" => "required",
                 "caste" => "required|integer",
-                "race" => "required|integer",
+                "race" => "required",
                 "pwd_document" => "required|max:3000|mimes:pdf",
                 "posted_district" => "required|integer",
                 "posted_block" => "required|integer",
