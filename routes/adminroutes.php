@@ -40,4 +40,4 @@ Route::get('/admin-get-caste', [EmployeeRegistrationController::class, 'getCaste
 // View All Registered Employees 
 Route::get('/admin-all-employees', [AllEmployeeController::class, 'allEmployees']);
 // View Specific Employee Details
-Route::post('/admin-view_employee', [AllEmployeeController::class, 'getAllEmployeeDetails']);
+Route::post('/admin-view-employee', [AllEmployeeController::class, 'getAllEmployeeDetails']);
