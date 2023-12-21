@@ -5,6 +5,7 @@ namespace App\MyMethod;
 use Exception;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class AdminMethod
 {
@@ -143,6 +144,25 @@ class AdminMethod
                 if (count($employee_data) != 0) {
                     $employee_data[0]->password = NULL;
                     $employee_data[0]->state = "Assam";
+                    $employee_data = json_decode(json_encode($employee_data), true);
+                    $file_key = [
+                        'employe_profile',
+                        'employe_birth_certificate',
+                        'pwd_document',
+                        'order_document',
+                        'current_joining_document',
+                        'initial_appointment_letter',
+                        'initial_joining_letter'
+                    ];
+                    foreach ($file_key as $file_value) {
+                        $employee_data[0][$file_value] = Storage::url($employee_data[0][$file_value]);
+                    }
+                    // if (AdminMethod::getFileURL($employee_data, $file_key)) {
+                    //     $employee_data = json_decode(json_encode($employee_data), false);
+                    // } else {
+                    //     throw new Exception('Error');
+                    // }
+                    $employee_data = json_decode(json_encode($employee_data), false);
                 }
             } else if ($step_id == 4) {
                 $employee_data = DB::table($table . ' as main_table')
@@ -177,6 +197,18 @@ class AdminMethod
             return $employee_data;
         } catch (Exception $err) {
             return NULL;
+        }
+    }
+    // Convert String URL 
+    public static function getFileURL($data, $file_key)
+    {
+        try {
+            foreach ($file_key as $file_value) {
+                $data[0][$file_value] = Storage::url($data[0][$file_value]);
+            }
+            return true;
+        } catch (Exception $err) {
+            return false;
         }
     }
 }
