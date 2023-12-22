@@ -135,7 +135,7 @@ class AdminMethod
                         'branche_table.branch_name as branch_name',
                         'district_table_1.district_name as district_name',
                         'block_table_1.block_name as block_name',
-                        'gp_1.gram_panchyat_name as gram_panchyat_name'
+                        'gp_1.gram_panchyat_name as gram_panchyat_name',
                     )
                     ->where('main_table.id', $main_id)
                     ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.employe_designation')
@@ -184,7 +184,8 @@ class AdminMethod
                         'district_table_1.district_name as transferred_to_district_name',
                         'block_table_1.block_name as transferred_to_block_name',
                         'gp_1.gram_panchyat_name as transferred_to_gp_name',
-                        'ser_status_table.service_name as service_name',
+                        'ser_status_table.service_name as service_status_name',
+                        'branch_table.branch_name as branch_name'
                     )
                     ->where('main_table.employe_id', $main_id)
                     ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.promoted_to_curr_des')
@@ -196,6 +197,7 @@ class AdminMethod
                     ->join('blocks as block_table_1', 'block_table_1.block_id', '=', 'main_table.transferred_to_block')
                     ->join('gram_panchyats as gp_1', 'gp_1.gram_panchyat_id', '=', 'main_table.transferred_to_gp')
                     ->join('service_status as ser_status_table', 'ser_status_table.id', '=', 'main_table.service_branch')
+                    ->join('branches as branch_table', 'branch_table.id', '=', 'main_table.service_branch')
                     ->get();
             } else {
                 $employee_data = DB::table($table)
