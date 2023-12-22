@@ -121,6 +121,7 @@ class AdminMethod
                         'main_table.*',
                         'main_table.id as main_id',
                         'desig_table.designation_name as designation_name',
+                        'caste_table.caste as caste_name',
                         'ser_status_table.service_name as service_name',
                         'district_table.district_name as posted_district_name',
                         'block_table.block_name as posted_block_name',
@@ -132,6 +133,7 @@ class AdminMethod
                     )
                     ->where('main_table.id', $main_id)
                     ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.employe_designation')
+                    ->join('caste_list as caste_table', 'caste_table.id', '=', 'main_table.caste')
                     ->join('service_status as ser_status_table', 'ser_status_table.id', '=', 'main_table.service_status')
                     ->join('districts as district_table', 'district_table.district_code', '=', 'main_table.posted_district')
                     ->join('blocks as block_table', 'block_table.block_id', '=', 'main_table.posted_block')
