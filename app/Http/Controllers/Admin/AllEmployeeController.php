@@ -53,15 +53,12 @@ class AllEmployeeController extends Controller
             if ($employee_data == NULL) {
                 $message = "Server Error Please Try Again !";
             } else {
-                if (count($employee_data) == 0) {
-                    $message = "Data Not Found !";
-                } else {
-                    return response()->json(['status' => 200, "data" => $employee_data], 200);
-                }
+                return response()->json(['status' => 200, "data" => $employee_data], 200);
             }
         } else {
             $message = "Required Input Are Not Found ";
         }
         return response()->json(['status' => $status, 'message' => $message], 200);
     }
+    // Search Filter On One Input 
 }
