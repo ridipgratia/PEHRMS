@@ -60,5 +60,18 @@ class AllEmployeeController extends Controller
         }
         return response()->json(['status' => $status, 'message' => $message], 200);
     }
-    // Search Filter On One Input 
+    // Search Filter On One Input
+    public function searchOnOneInput(Request $request)
+    {
+        $status = 400;
+        if ($request->search_query) {
+            $filter_data = AdminMethod::searchOnOneInput($request->search_query);
+            if ($filter_data) {
+                return response()->json(['status' => $status, 'data' => $filter_data]);
+            } else {
+                return response()->json(['status' => $status, 'message' => 'Try Later Database Try']);
+            }
+        }
+        return response()->json(['status' => 200, 'message' => '']);
+    }
 }

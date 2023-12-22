@@ -213,4 +213,32 @@ class AdminMethod
             return false;
         }
     }
+    // Search Filter On One Input Call Method
+    public static function searchOnOneInput($search_query)
+    {
+        try {
+            $employees = DB::table('employees as main_table')
+                ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.employe_designation')
+                ->join('service_status as service_status_table', 'service_status_table.id', '=', 'main_table.service_status')
+                ->orWhere('main_table.employe_code', 'like', '%' . $search_query . '%')
+                ->orWhere('main_table.employe_name', 'like', '%' . $search_query . '%')
+                ->orWhere('main_table.employe_designation', 'like', '%' . $search_query . '%')
+                ->orWhere('main_table.employe_phone', 'like', '%' . $search_query . '%')
+                ->select(
+                    'main_table.id as main_id',
+                    'main_table.employe_code',
+                    'main_table.employe_name',
+                    'main_table.employe_designation',
+                    'main_table.service_status',
+                    'main_table.employe_phone',
+                    'main_table.employe_email',
+                    'desig_table.designation_name as designation_name',
+                    'service_status_table.service_name as service_name'
+                )
+                ->get();
+            return $employees;
+        } catch (Exception $err) {
+            return NULL;
+        }
+    }
 }

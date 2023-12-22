@@ -41,3 +41,5 @@ Route::get('/admin-get-caste', [EmployeeRegistrationController::class, 'getCaste
 Route::get('/admin-all-employees', [AllEmployeeController::class, 'allEmployees']);
 // View Specific Employee Details
 Route::post('/admin-view-employee', [AllEmployeeController::class, 'getAllEmployeeDetails']);
+// Search On One Input 
+Route::post('/admin-search-one-input', [AllEmployeeController::class, 'searchOnOneInput']);
