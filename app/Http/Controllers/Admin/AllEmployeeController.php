@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\MyMethod\AdminMethod;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 
@@ -67,15 +68,29 @@ class AllEmployeeController extends Controller
         if ($request->search_query) {
             $filter_data = AdminMethod::searchOnOneInput($request->search_query);
             if ($filter_data) {
-                return response()->json(['status' => $status, 'data' => $filter_data]);
+                return response()->json(['status' => $status, 'data' => $filter_data], 200);
             } else {
-                return response()->json(['status' => $status, 'message' => 'Try Later Database Try']);
+                return response()->json(['status' => $status, 'message' => 'Try Later Database Try'], 200);
             }
         }
         return response()->json(['status' => 200, 'message' => '']);
     }
     // Search By Many Select Input 
-    public function searchByManySelect(Request $request){
-        
+    public function searchByManySelect(Request $request)
+    {
+        $search_keys = [
+            'district' => $request->district,
+            'block' => $request->block,
+            'gp' => $request->gp,
+            'level_id' => $request->level_id,
+            'employe_designation' => $request->employe_designation,
+            'service_status' => $request->service_status
+        ];
+        $search_filters = AdminMethod::searchByManySelectMethod($search_keys);
+        if ($search_filters) {
+            return response()->json(['status' => 200, 'data' => $search_filters], 200);
+        } else {
+            return response()->json(['status' => 400, 'message' => "Server Error Try Later !"], 200);
+        }
     }
 }

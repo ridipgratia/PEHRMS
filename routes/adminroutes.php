@@ -43,3 +43,5 @@ Route::get('/admin-all-employees', [AllEmployeeController::class, 'allEmployees'
 Route::post('/admin-view-employee', [AllEmployeeController::class, 'getAllEmployeeDetails']);
 // Search On One Input 
 Route::post('/admin-search-one-input', [AllEmployeeController::class, 'searchOnOneInput']);
+// Search By Many Select Options
+Route::post('search-by-many-select', [AllEmployeeController::class, 'searchByManySelect']);

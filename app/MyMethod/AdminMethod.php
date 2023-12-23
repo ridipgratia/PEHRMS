@@ -231,6 +231,7 @@ class AdminMethod
                 ->join('districts as district_table', 'district_table.district_code', '=', 'main_table.posted_district')
                 ->join('blocks as block_table', 'block_table.block_id', '=', 'main_table.posted_block')
                 ->join('gram_panchyats as gp', 'gp.gram_panchyat_id', '=', 'main_table.posted_gp')
+                ->join('levels as level_table', 'level_table.id', '=', 'main_table.level_id')
                 ->orWhere('main_table.employe_code', 'like', '%' . $search_query . '%')
                 ->orWhere('main_table.employe_name', 'like', '%' . $search_query . '%')
                 ->orWhere('main_table.employe_designation', 'like', '%' . $search_query . '%')
@@ -247,12 +248,53 @@ class AdminMethod
                     'service_status_table.service_name as service_name',
                     'district_table.district_name as district_name',
                     'block_table.block_name as block_name',
-                    'gp.gram_panchyat_name as gram_panchyat_name'
+                    'gp.gram_panchyat_name as gram_panchyat_name',
+                    'level_table.level_name as level_name'
                 )
                 ->get();
             return $employees;
         } catch (Exception $err) {
             return NULL;
+        }
+    }
+    // Search By Many Select Input
+    public static function searchByManySelectMethod($search_keys)
+    {
+        $check = false;
+        try {
+            $search_query = DB::table('employees as main_table')
+                ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.employe_designation')
+                ->join('service_status as service_status_table', 'service_status_table.id', '=', 'main_table.service_status')
+                ->join('districts as district_table', 'district_table.district_code', '=', 'main_table.posted_district')
+                ->join('blocks as block_table', 'block_table.block_id', '=', 'main_table.posted_block')
+                ->join('gram_panchyats as gp', 'gp.gram_panchyat_id', '=', 'main_table.posted_gp')
+                ->join('levels as level_table', 'level_table.id', '=', 'main_table.level_id');
+            foreach ($search_keys as $search_key => $search_value) {
+                if ($search_value) {
+                    $search_query->where('main_table.' . $search_key, $search_value);
+                }
+            }
+            $search_filters = $search_query
+                ->select(
+                    'main_table.id as main_id',
+                    'main_table.employe_code',
+                    'main_table.employe_name',
+                    'main_table.employe_designation',
+                    'main_table.service_status',
+                    'main_table.employe_phone',
+                    'main_table.employe_email',
+                    'main_table.level_id',
+                    'desig_table.designation_name as designation_name',
+                    'service_status_table.service_name as service_name',
+                    'district_table.district_name as district_name',
+                    'block_table.block_name as block_name',
+                    'gp.gram_panchyat_name as gram_panchyat_name',
+                    'level_table.level_name as level_name'
+                )
+                ->get();
+            return $search_filters;
+        } catch (Exception $err) {
+            $check = NULL;
         }
     }
 }
