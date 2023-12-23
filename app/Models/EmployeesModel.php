@@ -10,6 +10,7 @@ class EmployeesModel extends Model
     use HasFactory;
     protected $table = 'employees';
     protected $fillable = [
+        'level_id',
         'employe_code',
         'password',
         'employe_name',

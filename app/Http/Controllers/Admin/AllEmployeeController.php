@@ -74,4 +74,8 @@ class AllEmployeeController extends Controller
         }
         return response()->json(['status' => 200, 'message' => '']);
     }
+    // Search By Many Select Input 
+    public function searchByManySelect(Request $request){
+        
+    }
 }

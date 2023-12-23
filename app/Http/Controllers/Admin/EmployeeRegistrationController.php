@@ -332,6 +332,7 @@ class EmployeeRegistrationController extends Controller
                             $check = true;
                             try {
                                 $save_employe = EmployeesModel::create([
+                                    'level_id' => $level_id,
                                     'employe_code' => $emp_code . (DB::select('select id from employees') == null ? 0 : DB::select('select id from employees order by id desc limit 1')[0]->id),
                                     "password" => Hash::make($password),
                                     "employe_name" => $request->employe_name,
