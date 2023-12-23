@@ -44,4 +44,6 @@ Route::post('/admin-view-employee', [AllEmployeeController::class, 'getAllEmploy
 // Search On One Input 
 Route::post('/admin-search-one-input', [AllEmployeeController::class, 'searchOnOneInput']);
 // Search By Many Select Options
-Route::post('search-by-many-select', [AllEmployeeController::class, 'searchByManySelect']);
+Route::post('/search-by-many-select', [AllEmployeeController::class, 'searchByManySelect']);
+// Get designation by level id
+Route::post('admin-designation-by-level', [EmployeeRegistrationController::class, 'getDesignationByLevel']);

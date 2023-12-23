@@ -759,4 +759,20 @@ class EmployeeRegistrationController extends Controller
             return response()->json(['status' => 400, 'message' => 'Server Side Error Please try Later !']);
         }
     }
+    // Get Designations By Level ID
+    public function getDesignationByLevel(Request $request)
+    {
+        $level_id = $request->level_id;
+        if ($level_id) {
+            try {
+                $designations = db::table('designations')
+                    ->select('designation_name')
+                    ->where('level_id', $level_id)
+                    ->get();
+                return response()->json(['status' => 200, 'data' => $designations]);
+            } catch (Exception $err) {
+                return response()->json(['status' => 400, 'message' => 'Server side error, Plrase try later!']);
+            }
+        }
+    }
 }
