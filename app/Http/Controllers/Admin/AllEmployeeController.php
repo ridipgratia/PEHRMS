@@ -68,6 +68,7 @@ class AllEmployeeController extends Controller
         if ($request->search_query) {
             $filter_data = AdminMethod::searchOnOneInput($request->search_query);
             if ($filter_data) {
+                $status = 200;
                 return response()->json(['status' => $status, 'data' => $filter_data], 200);
             } else {
                 return response()->json(['status' => $status, 'message' => 'Try Later Database Try'], 200);
