@@ -95,7 +95,7 @@ return [
         // Employe Provider
         'employes' => [
             'driver' => 'eloquent',
-            'model' => App\Models\EmployeModel::class
+            'model' => App\Models\EmployeesModel::class
         ],
         // 'users' => [
         //     'driver' => 'database',

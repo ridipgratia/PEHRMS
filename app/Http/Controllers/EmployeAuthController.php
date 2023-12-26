@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EmployeesModel;
 use App\Models\EmployeModel;
 use App\MyMethod\EmailSender;
 use App\MyMethod\EmployeMethod;
@@ -19,7 +20,7 @@ class EmployeAuthController extends Controller
     public function login(Request $request)
     {
         $login_data = [
-            'email' => $request->email,
+            'employe_email' => $request->email,
             'password' => $request->password,
             'level_id' => $request->level_id
         ];
@@ -28,7 +29,7 @@ class EmployeAuthController extends Controller
         if (Auth::guard('employe')->attempt($login_data)) {
             $check = false;
             try {
-                $login_user = EmployeModel::where('email', $request->email)->first();
+                $login_user = EmployeesModel::where('employe_email', $request->email)->first();
                 $check = true;
             } catch (Exception $err) {
                 $check = false;
@@ -72,14 +73,14 @@ class EmployeAuthController extends Controller
         if ($login_email == null) {
             $message = "Email ID Required ";
         } else {
-            $login_employe = EmployeModel::where('email', $login_email)->first();
+            $login_employe = EmployeesModel::where('employe_email', $login_email)->first();
             if ($login_employe) {
                 $otp = rand(1000, 9999);
-                $emailData = ['otp' => $otp, 'name' => $login_employe->name, 'subject' => 'Employe Login OTP'];
+                $emailData = ['otp' => $otp, 'name' => $login_employe->employe_code, 'subject' => 'Employe Login OTP'];
                 date_default_timezone_set('Asia/Kolkata');
                 $send_time = date('Y-m-d H:i:s');
                 $save_otp_data = [
-                    'email' => $login_employe->email,
+                    'email' => $login_employe->employe_email,
                     'expire_time' => $send_time,
                     'otp' => $otp,
                     'created_at' => $send_time,
@@ -87,7 +88,7 @@ class EmployeAuthController extends Controller
                 ];
                 $check = EmailSender::saveOTP('employe_lotp', $save_otp_data);
                 if ($check) {
-                    $check = EmailSender::emailSend($emailData, $login_employe->email, 'employe_otp');
+                    $check = EmailSender::emailSend($emailData, $login_employe->employe_email, 'employe_otp');
                     if ($check) {
                         $status = 200;
                         $message = "OTP Send Successfully In Your Email !";
@@ -120,11 +121,11 @@ class EmployeAuthController extends Controller
         if ($login_email == null || $employe_otp == null) {
             $message = "OTP Required !";
         } else {
-            $login_employe = EmployeModel::where('email', $login_email)->first();
+            $login_employe = EmployeesModel::where('employe_email', $login_email)->first();
             if ($login_employe) {
                 try {
                     $otp_data = DB::table('employe_lotp')
-                        ->where('email', $login_employe->email)
+                        ->where('email', $login_employe->employe_email)
                         ->get();
                     $check = true;
                 } catch (Exception $err) {
