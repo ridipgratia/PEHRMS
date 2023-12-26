@@ -234,8 +234,8 @@ class AdminMethod
                 ->join('levels as level_table', 'level_table.id', '=', 'main_table.level_id')
                 ->orWhere('main_table.employe_code', 'like', '%' . $search_query . '%')
                 ->orWhere('main_table.employe_name', 'like', '%' . $search_query . '%')
-                ->orWhere('main_table.employe_designation', 'like', '%' . $search_query . '%')
-                ->orWhere('main_table.employe_phone', 'like', '%' . $search_query . '%')
+                ->orWhere('desig_table.designation_name', 'like', '%' . $search_query . '%')
+                ->orWhere('service_status_table.service_name', 'like', '%' . $search_query . '%')
                 ->select(
                     'main_table.id as main_id',
                     'main_table.employe_code',
