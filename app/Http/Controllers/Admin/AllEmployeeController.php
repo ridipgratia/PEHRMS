@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\ExportEmployeesExcel;
 use App\Http\Controllers\Controller;
 use App\MyMethod\AdminMethod;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AllEmployeeController extends Controller
 {
@@ -80,12 +82,11 @@ class AllEmployeeController extends Controller
     public function searchByManySelect(Request $request)
     {
         $search_keys = [
-            'district' => $request->district,
-            'block' => $request->block,
-            'gp' => $request->gp,
+            'posted_district' => $request->district,
+            'posted_block' => $request->block,
+            'posted_gp' => $request->gp,
             'level_id' => $request->level_id,
             'employe_designation' => $request->employe_designation,
-            'service_status' => $request->service_status
         ];
         $search_filters = AdminMethod::searchByManySelectMethod($search_keys);
         if ($search_filters) {
@@ -93,5 +94,10 @@ class AllEmployeeController extends Controller
         } else {
             return response()->json(['status' => 400, 'message' => "Server Error Try Later !"], 200);
         }
+    }
+    // Export Employees Excel 
+    public function exportEmployeeExcel(Request $request)
+    {
+        return Excel::download(new ExportEmployeesExcel(1), 'employeeDetails.xlsx', \Maatwebsite\Excel\Excel::XLSX, ['Content-Type' => 'text/xlsx']);
     }
 }

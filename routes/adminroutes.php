@@ -47,3 +47,5 @@ Route::post('/admin-search-one-input', [AllEmployeeController::class, 'searchOnO
 Route::post('/search-by-many-select', [AllEmployeeController::class, 'searchByManySelect']);
 // Get designation by level id
 Route::post('admin-designation-by-level', [EmployeeRegistrationController::class, 'getDesignationByLevel']);
+// Export Employees Data Excel
+Route::post('/export-employee-excel', [AllEmployeeController::class, 'exportEmployeeExcel']);
