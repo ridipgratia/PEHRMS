@@ -766,7 +766,10 @@ class EmployeeRegistrationController extends Controller
         if ($level_id) {
             try {
                 $designations = db::table('designations')
-                    ->select('designation_name')
+                    ->select(
+                        'designation_name',
+                        'id'
+                    )
                     ->where('level_id', $level_id)
                     ->get();
                 return response()->json(['status' => 200, 'data' => $designations]);
