@@ -49,3 +49,7 @@ Route::post('/search-by-many-select', [AllEmployeeController::class, 'searchByMa
 Route::post('admin-designation-by-level', [EmployeeRegistrationController::class, 'getDesignationByLevel']);
 // Export Employees Data Excel
 Route::post('/export-employee-excel', [AllEmployeeController::class, 'exportEmployeeExcel']);
+// Export Employees Data CSV
+Route::post('/export-employee-csv', [AllEmployeeController::class, 'exportEmployeeCSV']);
+// Export Employees Data PDF
+Route::post('/export-employee-pdf', [AllEmployeeController::class, 'exportEmployeePDF']);

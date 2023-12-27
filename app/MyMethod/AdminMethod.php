@@ -73,6 +73,7 @@ class AdminMethod
                 ->join('districts as district_table', 'district_table.district_code', '=', 'main_table.posted_district')
                 ->join('blocks as block_table', 'block_table.block_id', '=', 'main_table.posted_block')
                 ->join('gram_panchyats as gp', 'gp.gram_panchyat_id', '=', 'main_table.posted_gp')
+                ->orderBy('main_table.employe_name', 'asc')
                 ->get();
             // $employees = $employees->map(function ($employe) {
             //     $employe->id = Crypt::encryptString($employe->id);
@@ -251,6 +252,7 @@ class AdminMethod
                     'gp.gram_panchyat_name as gram_panchyat_name',
                     'level_table.level_name as level_name'
                 )
+                ->orderBy('main_table.employe_name', 'asc')
                 ->get();
             return $employees;
         } catch (Exception $err) {
@@ -289,10 +291,43 @@ class AdminMethod
                     'gp.gram_panchyat_name as gram_panchyat_name',
                     'level_table.level_name as level_name'
                 )
+                ->orderBy('main_table.employe_name', 'asc')
                 ->get();
             return $search_filters;
         } catch (Exception $err) {
             $check = NULL;
+        }
+    }
+    // Export Employees PDF Method 
+    public static function exportEmployeesPDFMethod($check_filter_id)
+    {
+        $sql_query = DB::table('employees as main_table');
+        $pre_sql = $sql_query
+            ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.employe_designation')
+            ->join('districts as district_table', 'district_table.district_code', '=', 'main_table.posted_district')
+            ->join('blocks as block_table', 'block_table.block_id', '=', 'main_table.posted_block')
+            ->join('gram_panchyats as gp', 'gp.gram_panchyat_id', '=', 'main_table.posted_gp')
+            ->join('levels as level_table', 'level_table.id', '=', 'main_table.level_id')
+            ->select(
+                'main_table.id as main_id',
+                'main_table.employe_code',
+                'main_table.employe_name',
+                'main_table.employe_designation',
+                'main_table.service_status',
+                'main_table.employe_phone',
+                'main_table.employe_email',
+                'main_table.level_id',
+                'desig_table.designation_name as designation_name',
+                'district_table.district_name as district_name',
+                'block_table.block_name as block_name',
+                'gp.gram_panchyat_name as gram_panchyat_name',
+                'level_table.level_name as level_name'
+            );
+        if ($check_filter_id == 1) {
+            $employees = $pre_sql
+                ->orderBy('main_table.employe_name', 'asc')
+                ->get();
+            return $employees;
         }
     }
 }

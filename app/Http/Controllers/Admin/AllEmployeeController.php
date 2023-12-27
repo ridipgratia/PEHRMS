@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exports\ExportEmployeesExcel;
 use App\Http\Controllers\Controller;
 use App\MyMethod\AdminMethod;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
@@ -99,5 +100,27 @@ class AllEmployeeController extends Controller
     public function exportEmployeeExcel(Request $request)
     {
         return Excel::download(new ExportEmployeesExcel(1), 'employeeDetails.xlsx', \Maatwebsite\Excel\Excel::XLSX, ['Content-Type' => 'text/xlsx']);
+    }
+    // Export Employees CSV
+    public function exportEmployeeCSV(Request $request)
+    {
+        return Excel::download(new ExportEmployeesExcel(1), 'employeeDetails.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+    }
+    // Export Employees PDF
+    public function exportEmployeePDF(Request $request)
+    {
+        try {
+            $employees = AdminMethod::exportEmployeesPDFMethod(1);
+        } catch (Exception $err) {
+            $employees = [];
+        }
+        $views = [
+            'title' => "Employees Data As PDF File",
+            'date' => date('Y-m-d'),
+            'employees' => $employees
+        ];
+
+        $pdf = Pdf::loadView('exports.employees_pdf', $views);
+        return $pdf->download('employeesDetails.pdf');
     }
 }
