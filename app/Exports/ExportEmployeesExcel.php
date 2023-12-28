@@ -18,11 +18,13 @@ class ExportEmployeesExcel implements FromView
     //     //
     // }
     public $check_filter_type;
+    public $search_element;
     public $sql_query;
     public $pre_sql;
-    public function __construct($check_filter_type)
+    public function __construct($check_filter_type, $search_element)
     {
         $this->check_filter_type = $check_filter_type;
+        $this->search_element = $search_element;
         $this->sql_query = DB::table('employees as main_table');
         $this->pre_sql = $this->sql_query
             ->join('designations as desig_table', 'desig_table.id', '=', 'main_table.employe_designation')
@@ -54,6 +56,12 @@ class ExportEmployeesExcel implements FromView
             } catch (Exception $err) {
                 $employees = [];
             }
+        } else if ($this->check_filter_type == 2) {
+            try {
+                $employees = $this->onInputSearch($this->search_element);
+            } catch (Exception $err) {
+                $employees = [];
+            }
         }
         return view('exports.employees_excel', [
             'employees' => $employees
@@ -63,6 +71,18 @@ class ExportEmployeesExcel implements FromView
     {
         $employees =
             $this->pre_sql
+            ->orderBy('main_table.employe_name', 'asc')
+            ->get();
+        return $employees;
+    }
+    public function onInputSearch($search_query)
+    {
+        $employees =
+            $this->pre_sql
+            ->orWhere('main_table.employe_code', 'like', '%' . $search_query . '%')
+            ->orWhere('main_table.employe_name', 'like', '%' . $search_query . '%')
+            ->orWhere('desig_table.designation_name', 'like', '%' . $search_query . '%')
+            ->orWhere('service_status_table.service_name', 'like', '%' . $search_query . '%')
             ->orderBy('main_table.employe_name', 'asc')
             ->get();
         return $employees;

@@ -99,12 +99,42 @@ class AllEmployeeController extends Controller
     // Export Employees Excel 
     public function exportEmployeeExcel(Request $request)
     {
-        return Excel::download(new ExportEmployeesExcel(1), 'employeeDetails.xlsx', \Maatwebsite\Excel\Excel::XLSX, ['Content-Type' => 'text/xlsx']);
+        if ($request->filter_id) {
+            $filter_id = $request->filter_id;
+            $search_element = null;
+            if ($filter_id == 2) {
+                $search_element = $request->search_query;
+            } else if ($filter_id == 3) {
+                $search_element = [
+                    'posted_district' => $request->district,
+                    'posted_block' => $request->block,
+                    'posted_gp' => $request->gp,
+                    'level_id' => $request->level_id,
+                    'employe_designation' => $request->employe_designation,
+                ];
+            }
+            return Excel::download(new ExportEmployeesExcel(1, $search_element), 'employeeDetails.xlsx', \Maatwebsite\Excel\Excel::XLSX, ['Content-Type' => 'text/xlsx']);
+        }
     }
     // Export Employees CSV
     public function exportEmployeeCSV(Request $request)
     {
-        return Excel::download(new ExportEmployeesExcel(1), 'employeeDetails.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        if ($request->filter_id) {
+            $filter_id = $request->filter_id;
+            $search_element = null;
+            if ($filter_id == 2) {
+                $search_element = $request->search_query;
+            } else if ($filter_id == 3) {
+                $search_element = [
+                    'posted_district' => $request->district,
+                    'posted_block' => $request->block,
+                    'posted_gp' => $request->gp,
+                    'level_id' => $request->level_id,
+                    'employe_designation' => $request->employe_designation,
+                ];
+            }
+            return Excel::download(new ExportEmployeesExcel($filter_id, $search_element), 'employeeDetails.csv', \Maatwebsite\Excel\Excel::CSV, ['Content-Type' => 'text/csv']);
+        }
     }
     // Export Employees PDF
     public function exportEmployeePDF(Request $request)
