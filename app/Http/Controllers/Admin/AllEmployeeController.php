@@ -113,7 +113,7 @@ class AllEmployeeController extends Controller
                     'employe_designation' => $request->employe_designation,
                 ];
             }
-            return Excel::download(new ExportEmployeesExcel(1, $search_element), 'employeeDetails.xlsx', \Maatwebsite\Excel\Excel::XLSX, ['Content-Type' => 'text/xlsx']);
+            return Excel::download(new ExportEmployeesExcel($filter_id, $search_element), 'employeeDetails.xlsx', \Maatwebsite\Excel\Excel::XLSX, ['Content-Type' => 'text/xlsx']);
         }
     }
     // Export Employees CSV
