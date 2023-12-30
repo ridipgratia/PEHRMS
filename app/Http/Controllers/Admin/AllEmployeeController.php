@@ -153,4 +153,26 @@ class AllEmployeeController extends Controller
         $pdf = Pdf::loadView('exports.employees_pdf', $views);
         return $pdf->download('employeesDetails.pdf');
     }
+    // Order By Filtering
+    public function orderByFilter(Request $request)
+    {
+        if ($request->column_index && $request->order_index) {
+            $column_names = [
+                'main_table.employe_code',
+                'main_table.employe_name',
+                'desig_table.designation_name',
+                'service_status_table.service_name'
+            ];
+            $order_name = [
+                'asc',
+                'desc'
+            ];
+            $employees = AdminMethod::orderByFilterMethod($column_names[$request->column_index - 1], $order_name[$request->order_index - 1]);
+            if ($employees) {
+                return response()->json(['status' => 200, 'message' => $employees], 200);
+            } else {
+                return response()->json(['status' => 400, 'message' => 'Server Error Please Try Later'], 200);
+            }
+        }
+    }
 }

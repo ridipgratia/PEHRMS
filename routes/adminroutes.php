@@ -53,3 +53,5 @@ Route::post('/export-employee-excel', [AllEmployeeController::class, 'exportEmpl
 Route::post('/export-employee-csv', [AllEmployeeController::class, 'exportEmployeeCSV']);
 // Export Employees Data PDF
 Route::post('/export-employee-pdf', [AllEmployeeController::class, 'exportEmployeePDF']);
+// Order By Filter 
+Route::post('/order-by-filter', [AllEmployeeController::class, 'orderByFilter']);
