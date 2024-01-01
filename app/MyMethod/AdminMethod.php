@@ -343,6 +343,7 @@ class AdminMethod
                 ->join('blocks as block_table', 'block_table.block_id', '=', 'main_table.posted_block')
                 ->join('gram_panchyats as gp', 'gp.gram_panchyat_id', '=', 'main_table.posted_gp')
                 ->join('levels as level_table', 'level_table.id', '=', 'main_table.level_id')
+                ->join('service_status as service_status_table', 'service_status_table.id', '=', 'main_table.service_status')
                 ->select(
                     'main_table.id as main_id',
                     'main_table.employe_code',
@@ -356,7 +357,8 @@ class AdminMethod
                     'district_table.district_name as district_name',
                     'block_table.block_name as block_name',
                     'gp.gram_panchyat_name as gram_panchyat_name',
-                    'level_table.level_name as level_name'
+                    'level_table.level_name as level_name',
+                    'service_status_table.service_name as service_name'
                 );
             $employees = $pre_sql
                 ->orderBy($column_name, $order_name)
