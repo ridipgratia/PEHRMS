@@ -368,4 +368,15 @@ class AdminMethod
             return NULL;
         }
     }
+    // Get Total Employee Count Method 
+    public static function totalRegistrationEmployeeCount()
+    {
+        try {
+            $count = DB::table('employees')
+                ->count();
+            return $count;
+        } catch (Exception $err) {
+            return null;
+        }
+    }
 }

@@ -175,4 +175,13 @@ class AllEmployeeController extends Controller
             }
         }
     }
+    public function totalRegisterEmployee(Request $request)
+    {
+        $total__employees = AdminMethod::totalRegistrationEmployeeCount();
+        if ($total__employees !== NULL) {
+            return response()->json(['status' => 200, 'total_employee' => $total__employees]);
+        } else {
+            return response()->json(['status' => 400, 'message' => 'Server Error please try Later ']);
+        }
+    }
 }

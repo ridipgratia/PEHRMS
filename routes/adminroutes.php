@@ -55,3 +55,5 @@ Route::post('/export-employee-csv', [AllEmployeeController::class, 'exportEmploy
 Route::post('/export-employee-pdf', [AllEmployeeController::class, 'exportEmployeePDF']);
 // Order By Filter 
 Route::post('/order-by-filter', [AllEmployeeController::class, 'orderByFilter']);
+// Get Total Count Of Register Employees 
+Route::get('/total-register-employee', [AllEmployeeController::class, 'totalRegisterEmployee']);
