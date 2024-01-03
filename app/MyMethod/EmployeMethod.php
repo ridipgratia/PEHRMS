@@ -175,7 +175,7 @@ class EmployeMethod
     {
         DB::beginTransaction();
         try {
-            $secure_number = rand(10000, 99999);
+            $secure_number = rand(100000, 999999);
             $hash_url = Hash::make($email . (string)$secure_number);
             if ($check_email == 1) {
                 DB::table('change_password_verify')
