@@ -163,4 +163,105 @@ class EmployeAuthController extends Controller
         }
         return response()->json(['status' => $status, 'message' => $message], 200);
     }
+    // Reset Employee Password 
+    // Reset Password Link Apply
+    public function resetPassword(Request $request)
+    {
+        date_default_timezone_set('Asia/Kolkata');
+        $email = $request->email;
+        $message = "";
+        $status = 400;
+        $check_response = EmployeMethod::checkEmailRegistered($email);
+        if ($check_response[0]) {
+            if ($check_response[1] == 1) {
+                $check_response = EmployeMethod::checkResetPasswordEmail($email);
+                if ($check_response[0]) {
+                    $apply_url_res = EmployeMethod::setResetPasswordData($email, $check_response[1]);
+                    if ($apply_url_res) {
+                        $emailData = [
+                            'url' => 'http://localhost:5173/verify-reset-password/' . $apply_url_res,
+                            'email' => $email,
+                            'subject' => 'Password Reset Apply Link '
+                        ];
+                        $check = EmailSender::emailSend($emailData, $email, 'reset_pasword');
+                        if ($check) {
+                            $message = "Check Reet Password Link In Your Email";
+                            $status = 200;
+                        } else {
+                            $message = "Email Not Send Try Again";
+                        }
+                    } else {
+                        $message = "Try Again To Reset Password !";
+                    }
+                } else {
+                    $message = "Server Error Please Try Later !";
+                }
+            } else {
+                $message = "Enter a Registered Email ID";
+            }
+        } else {
+            $message = "Server Error Please  Try Later !";
+        }
+        return response()->json(['status' => $status, 'message' => $message]);
+    }
+    // Verify Reset Password Link
+    public function verifyResetPasswordLink(Request $request)
+    {
+        date_default_timezone_set('Asia/Kolkata');
+        $url = $request->url;
+        $password = $request->password;
+        $confirm_password = $request->confirm_password;
+        $message = [];
+        $status = 400;
+        $error_message = [
+            'required' => ':attribute is required field',
+        ];
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'password' => 'required',
+                'confirm_password' => 'required',
+                'url' => 'required'
+            ],
+            $error_message
+        );
+        if ($validator->fails()) {
+            array_push($message, $validator->errors()->all());
+        } else {
+            $check_res = EmployeMethod::checkResetPassLinkValid($url);
+            if ($check_res[0]) {
+                if (count($check_res[1]) == 1) {
+                    $new_expire_time = new DateTime($check_res[1][0]->expire_time);
+                    $recive_time = date('Y-m-d H:i:s');
+                    $time_diff = $new_expire_time->diff(new DateTime($recive_time));
+                    if ($time_diff->y == 0 & $time_diff->m == 0 && $time_diff->d == 0 && $time_diff->h == 0 && $time_diff->i <= 20) {
+                        if ($check_res[1][0]->active == 1) {
+                            if (Hash::check($check_res[1][0]->email . $check_res[1][0]->secure_number, $url)) {
+                                if ($password === $confirm_password) {
+                                    if (EmployeMethod::updateResetPassword($url, $check_res[1][0]->email, $password)) {
+                                        array_push($message, ['Password Changed Successfully']);
+                                    } else {
+                                        array_push($message, ['Password Not Change ! Try Again ']);
+                                    }
+                                } else {
+                                    array_push($message, ['Your Confirm Password Does Not Matched ']);
+                                }
+                            } else {
+                                array_push($message, ['Reset Password Link Not Identify ']);
+                            }
+                        } else {
+                            array_push($message, ['Reset Password Link Already Used !']);
+                        }
+                    } else {
+                        array_push($message, ['Reset Password Link Expired ']);
+                    }
+                } else {
+                    array_push($message, ['Reset Password Link Is Not Valid ']);
+                }
+            } else {
+                array_push($message, ['Server Error Please Try Later ']);
+            }
+        }
+        return response()->json(['status' => $status, 'message' => $message]);
+    }
 }

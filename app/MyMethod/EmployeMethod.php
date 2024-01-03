@@ -5,6 +5,7 @@ namespace App\MyMethod;
 use App\Models\EmployeModel;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class EmployeMethod
@@ -138,5 +139,104 @@ class EmployeMethod
             EmployeMethod::deleteFile($file_value);
         }
         Storage::deleteDirectory('public/images/EmployeDocument/' . $path . '/');
+    }
+    // Check Email Registered
+    public static function checkEmailRegistered($email)
+    {
+        $check_email = 0;
+        $check = false;
+        try {
+            $check_email = DB::table('employees')
+                ->where('employe_email', $email)
+                ->count();
+            $check = true;
+        } catch (Exception $err) {
+            $check = false;
+        }
+        return [$check, $check_email];
+    }
+    // Check reset Password Email Already Exists 
+    public static function checkResetPasswordEmail($email)
+    {
+        $check_email = 0;
+        $check = false;
+        try {
+            $check_email = DB::table('change_password_verify')
+                ->where('email', $email)
+                ->count();
+            $check = true;
+        } catch (Exception $err) {
+            $check = false;
+        }
+        return [$check, $check_email];
+    }
+    // Set Reset Password Link In database 
+    public static function setResetPasswordData($email, $check_email)
+    {
+        DB::beginTransaction();
+        try {
+            $secure_number = rand(10000, 99999);
+            $hash_url = Hash::make($email . (string)$secure_number);
+            if ($check_email == 1) {
+                DB::table('change_password_verify')
+                    ->where('email', $email)
+                    ->update([
+                        'secure_number' => $secure_number,
+                        'hash_url' => $hash_url,
+                        'expire_time' => date('Y-m-d H:i:s'),
+                        'active' => 1
+                    ]);
+            } else {
+                DB::table('change_password_verify')
+                    ->insert([
+                        'email' => $email,
+                        'secure_number' => $secure_number,
+                        'hash_url' => $hash_url,
+                        'expire_time' => date('Y-m-d H:i:s')
+                    ]);
+            }
+            DB::commit();
+            return $hash_url;
+        } catch (Exception $err) {
+            DB::rollBack();
+            return NULL;
+        }
+    }
+    // Check reset Password Valid 
+    public static function checkResetPassLinkValid($url)
+    {
+        $check = false;
+        $check_url = 0;
+        try {
+            $check_url = DB::table('change_password_verify')
+                ->where('hash_url', $url)
+                ->get();
+            $check = true;
+        } catch (Exception $err) {
+            $check = false;
+        }
+        return [$check, $check_url];
+    }
+    // Update reset Password 
+    public static function updateResetPassword($url, $email, $password)
+    {
+        DB::beginTransaction();
+        try {
+            DB::table('change_password_verify')
+                ->where('hash_url', $url)
+                ->update([
+                    'active' => 2
+                ]);
+            DB::table('employees')
+                ->where('employe_email', $email)
+                ->update([
+                    'password' => Hash::make($password)
+                ]);
+            DB::commit();
+            return true;
+        } catch (Exception $err) {
+            DB::rollBack();
+            return false;
+        }
     }
 }
