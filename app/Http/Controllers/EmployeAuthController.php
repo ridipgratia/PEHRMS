@@ -236,18 +236,14 @@ class EmployeAuthController extends Controller
                     $time_diff = $new_expire_time->diff(new DateTime($recive_time));
                     if ($time_diff->y == 0 & $time_diff->m == 0 && $time_diff->d == 0 && $time_diff->h == 0 && $time_diff->i <= 20) {
                         if ($check_res[1][0]->active == 1) {
-                            if (Hash::check($check_res[1][0]->email . $check_res[1][0]->secure_number, $url)) {
-                                if ($password === $confirm_password) {
-                                    if (EmployeMethod::updateResetPassword($url, $check_res[1][0]->email, $password)) {
-                                        array_push($message, ['Password Changed Successfully']);
-                                    } else {
-                                        array_push($message, ['Password Not Change ! Try Again ']);
-                                    }
+                            if ($password === $confirm_password) {
+                                if (EmployeMethod::updateResetPassword($url, $check_res[1][0]->email, $password)) {
+                                    array_push($message, ['Password Changed Successfully']);
                                 } else {
-                                    array_push($message, ['Your Confirm Password Does Not Matched ']);
+                                    array_push($message, ['Password Not Change ! Try Again ']);
                                 }
                             } else {
-                                array_push($message, ['Reset Password Link Not Identify ']);
+                                array_push($message, ['Your Confirm Password Does Not Matched ']);
                             }
                         } else {
                             array_push($message, ['Reset Password Link Already Used !']);

@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class EmployeMethod
 {
@@ -176,12 +177,14 @@ class EmployeMethod
         DB::beginTransaction();
         try {
             $secure_number = rand(100000, 999999);
-            $hash_url = Hash::make($email . (string)$secure_number);
+            // $hash_url = Hash::make($email . (string)$secure_number);
+            $hash_url = Str::random(40);
+            $hash_url = Str::replace("/", "", $hash_url);
+            $hash_url .= (string)$secure_number;
             if ($check_email == 1) {
                 DB::table('change_password_verify')
                     ->where('email', $email)
                     ->update([
-                        'secure_number' => $secure_number,
                         'hash_url' => $hash_url,
                         'expire_time' => date('Y-m-d H:i:s'),
                         'active' => 1
@@ -190,7 +193,6 @@ class EmployeMethod
                 DB::table('change_password_verify')
                     ->insert([
                         'email' => $email,
-                        'secure_number' => $secure_number,
                         'hash_url' => $hash_url,
                         'expire_time' => date('Y-m-d H:i:s')
                     ]);
