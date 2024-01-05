@@ -238,6 +238,7 @@ class EmployeAuthController extends Controller
                         if ($check_res[1][0]->active == 1) {
                             if ($password === $confirm_password) {
                                 if (EmployeMethod::updateResetPassword($url, $check_res[1][0]->email, $password)) {
+                                    $status = 200;
                                     array_push($message, ['Password Changed Successfully']);
                                 } else {
                                     array_push($message, ['Password Not Change ! Try Again ']);
